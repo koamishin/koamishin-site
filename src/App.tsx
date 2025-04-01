@@ -11,7 +11,7 @@ const SITE_TITLE = "Koamishin.org - Open Source Laravel Solutions";
 const SITE_DESCRIPTION =
   "Koamishin develops high-quality, open-source Laravel packages and applications like CMS, POS, and business systems to empower the developer community.";
 const SITE_IMAGE = "https://koamishin.org/og-image.png"; // **IMPORTANT**: Create and upload a preview image (e.g., 1200x630px) and use its absolute URL here.
-const TWITTER_HANDLE = "@YourTwitterHandle";
+// const TWITTER_HANDLE = "@YourTwitterHandle";
 function App() {
   return (
     <>

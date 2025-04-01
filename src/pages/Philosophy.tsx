@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Quote, Code, Users, Gift, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Quote, Users, Gift, Sparkles } from "lucide-react";
+// import { cn } from "@/lib/utils";
 
 // Animation Variants
 const sectionVariants = {

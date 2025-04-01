@@ -1,4 +1,4 @@
-import * as React from "react";
+// import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes"; // Use the hook from next-themes
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@/components/ui/button"; // Still use Button for structure if needed
+// import { Button } from "@/components/ui/button"; // Still use Button for structure if needed
 import { Github } from "lucide-react";
 
 const PageFooter: React.FC = () => {
