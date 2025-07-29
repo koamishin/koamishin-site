@@ -81,7 +81,7 @@ const Header: React.FC = () => {
     visible: {
       scaleX: 1,
       originX: 0.5,
-      transition: { duration: 0.3, ease: "easeOut" },
+      transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
     },
   };
 
