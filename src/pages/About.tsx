@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Users, Flower2, HeartHandshake } from "lucide-react";
+import { MapPin, Flower2, HeartHandshake } from "lucide-react";
 // import { cn } from "@/lib/utils";
 
 interface ValueCardProps {
@@ -124,11 +124,11 @@ const About: React.FC = () => {
           </motion.div>
 
           <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-            About Philippine Flowers
+            About Koamishin
           </h2>
 
           <p className="text-lg text-foreground/80">
-            Philippine Flowers is a family-owned business dedicated to bringing
+            Koamishin is a passionate collective dedicated to bringing
             the natural beauty and artistry of the Philippines to your special
             moments through premium artificial and natural flowers.
           </p>

@@ -112,7 +112,7 @@ const Hero: React.FC = () => {
                 transition={{ duration: 2, repeat: Infinity }}
               />
               <p className="text-sm font-medium tracking-wide text-muted-foreground">
-                PREMIUM FILIPINO FLOWERS
+                KOAMISHIN FLOWERS
               </p>
             </div>
 
@@ -139,15 +139,23 @@ const Hero: React.FC = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.5 }}
               >
-                Philippine
+                Koamishin
               </motion.span>
               <motion.span
-                className="text-primary ml-4"
+                className="text-primary"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 1.5 }}
+                transition={{ duration: 0.3, delay: 1.5 }}
               >
-                Flowers
+                .
+              </motion.span>
+              <motion.span
+                className="font-mono"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 1.8 }}
+              >
+                org
               </motion.span>
             </span>
             <motion.span

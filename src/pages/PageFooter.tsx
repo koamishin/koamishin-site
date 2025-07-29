@@ -10,7 +10,8 @@ const PageFooter: React.FC = () => {
           {/* Company info */}
           <div className="lg:col-span-2">
             <h3 className="font-serif text-xl font-bold text-foreground mb-4">
-              Philippine<span className="text-primary">Flowers</span>
+              Koamishin<span className="text-primary">.</span>
+              <span className="font-mono font-normal">org</span>
             </h3>
             <p className="text-muted-foreground mb-4 max-w-md">
               Bringing the beauty and artistry of Philippine flowers to your special moments.
@@ -18,7 +19,7 @@ const PageFooter: React.FC = () => {
             </p>
             <div className="flex gap-4">
               <a
-                href="https://facebook.com/philippineflowers"
+                href="https://facebook.com/koamishin"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
@@ -27,7 +28,7 @@ const PageFooter: React.FC = () => {
                 <Facebook className="h-4 w-4" />
               </a>
               <a
-                href="https://instagram.com/philippineflowers"
+                href="https://instagram.com/koamishin"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
@@ -50,11 +51,11 @@ const PageFooter: React.FC = () => {
                 +63 912 345 6789
               </a>
               <a
-                href="mailto:hello@philippineflowers.com"
+                href="mailto:flowers@koamishin.org"
                 className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Mail className="mr-2 h-4 w-4" />
-                hello@philippineflowers.com
+                flowers@koamishin.org
               </a>
               <div className="flex items-start text-sm text-muted-foreground">
                 <MapPin className="mr-2 h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -102,7 +103,7 @@ const PageFooter: React.FC = () => {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-border/20 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="font-sans text-sm text-muted-foreground text-center sm:text-left">
-            &copy; {new Date().getFullYear()} Philippine Flowers. All rights reserved.
+            &copy; {new Date().getFullYear()} Koamishin.org. All rights reserved.
           </p>
           <p className="font-sans text-xs text-muted-foreground">
             Crafted with ❤️ in the Philippines

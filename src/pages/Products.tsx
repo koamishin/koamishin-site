@@ -11,7 +11,7 @@ import {
   CheckCircle,
   Palette,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 
 // Interface for flower product categories
 interface ProductCategory {

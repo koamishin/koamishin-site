@@ -9,7 +9,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet"; // Added SheetClose
-import { Menu, Github, X } from "lucide-react"; // Added X for close button
+import { Menu, X } from "lucide-react"; // Added X for close button
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 // Define navigation items
@@ -102,7 +102,8 @@ const Header: React.FC = () => {
             {/* Optional Logo Icon Here */}
             {/* Using styles similar to Hero */}
             <span className="font-serif text-xl font-bold tracking-tight text-foreground">
-              Philippine<span className="text-primary">Flowers</span>
+              Koamishin<span className="text-primary">.</span>
+              <span className="font-mono font-normal">org</span>
             </span>
           </a>
         </div>
@@ -158,7 +159,8 @@ const Header: React.FC = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span className="font-serif text-lg font-bold tracking-tight text-foreground">
-                      Philippine<span className="text-primary">Flowers</span>
+                      Koamishin<span className="text-primary">.</span>
+                      <span className="font-mono font-normal">org</span>
                     </span>
                   </a>
                 </SheetTitle>
@@ -213,7 +215,7 @@ const Header: React.FC = () => {
           <Button variant="ghost" size="sm" asChild className="group">
             <a
               href="#contact"
-              aria-label="Contact Philippine Flowers"
+              aria-label="Contact Koamishin"
             >
               Contact Us
             </a>

@@ -249,7 +249,7 @@ const Services: React.FC = () => {
 
             {/* Attribution */}
             <p className="text-sm font-medium text-muted-foreground">
-              — Philippine Flowers Philosophy
+              — Koamishin Philosophy
             </p>
 
             {/* Decorative elements */}

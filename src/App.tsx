@@ -6,12 +6,12 @@ import Services from "./pages/Services";
 import PageFooter from "./pages/PageFooter";
 import { Helmet } from "react-helmet-async";
 
-const SITE_URL = "https://philippineflowers.com";
-const SITE_TITLE = "Philippine Flowers - Premium Artificial & Natural Flowers";
+const SITE_URL = "https://koamishin.org";
+const SITE_TITLE = "Koamishin - Premium Philippine Flowers & Arrangements";
 const SITE_DESCRIPTION =
-  "Discover beautiful artificial and natural flowers from the Philippines. Premium quality arrangements, bouquets, and floral decorations for every occasion. Handcrafted with Filipino artistry.";
-const SITE_IMAGE = "https://philippineflowers.com/og-image.png"; // **IMPORTANT**: Create and upload a preview image (e.g., 1200x630px) and use its absolute URL here.
-// const TWITTER_HANDLE = "@PhilippineFlowers";
+  "Koamishin specializes in beautiful artificial and natural flowers from the Philippines. Premium quality arrangements, bouquets, and floral decorations for every occasion. Handcrafted with Filipino artistry.";
+const SITE_IMAGE = "https://koamishin.org/og-image.png"; // **IMPORTANT**: Create and upload a preview image (e.g., 1200x630px) and use its absolute URL here.
+// const TWITTER_HANDLE = "@Koamishin";
 function App() {
   return (
     <>
@@ -21,9 +21,9 @@ function App() {
         <meta name="description" content={SITE_DESCRIPTION} />
         <meta
           name="keywords"
-          content="Philippine Flowers, Artificial Flowers, Natural Flowers, Flower Arrangements, Bouquets, Wedding Flowers, Filipino Craftsmanship, Floral Decorations"
+          content="Koamishin, Philippine Flowers, Artificial Flowers, Natural Flowers, Flower Arrangements, Bouquets, Wedding Flowers, Filipino Craftsmanship, Floral Decorations"
         />
-        <meta name="author" content="Philippine Flowers" />
+        <meta name="author" content="Koamishin" />
         <link rel="canonical" href={SITE_URL} />
         {/* --- Open Graph / Facebook --- */}
         <meta property="og:type" content="website" />
@@ -31,7 +31,7 @@ function App() {
         <meta property="og:title" content={SITE_TITLE} />
         <meta property="og:description" content={SITE_DESCRIPTION} />
         <meta property="og:image" content={SITE_IMAGE} />
-        <meta property="og:site_name" content="Philippine Flowers" />
+        <meta property="og:site_name" content="Koamishin" />
         {/* --- Twitter --- */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={SITE_URL} />
