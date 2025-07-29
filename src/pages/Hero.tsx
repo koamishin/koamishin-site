@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Github,
+  Phone,
   ArrowRight,
-  Package,
-  Code,
-  Zap,
-  ExternalLink,
+  Flower,
+  Heart,
+  Sparkles,
+  ShoppingBag,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -40,20 +40,20 @@ const Hero: React.FC = () => {
   const [activeFeature, setActiveFeature] = useState(0);
   const features = [
     {
-      icon: <Package className="h-5 w-5" />,
-      title: "Laravel Packages",
+      icon: <Flower className="h-5 w-5" />,
+      title: "Premium Quality",
       description:
-        "Modular, well-tested components to accelerate your workflow",
+        "Handcrafted artificial and fresh natural flowers from the Philippines",
     },
     {
-      icon: <Code className="h-5 w-5" />,
-      title: "Best Practices",
-      description: "Adherence to modern coding standards and design patterns",
+      icon: <Heart className="h-5 w-5" />,
+      title: "Made with Love",
+      description: "Each arrangement crafted with Filipino artistry and passion",
     },
     {
-      icon: <Zap className="h-5 w-5" />,
-      title: "Developer Experience",
-      description: "Intuitive APIs with comprehensive documentation",
+      icon: <Sparkles className="h-5 w-5" />,
+      title: "Every Occasion",
+      description: "Perfect flowers for weddings, events, and special moments",
     },
   ];
 
@@ -112,7 +112,7 @@ const Hero: React.FC = () => {
                 transition={{ duration: 2, repeat: Infinity }}
               />
               <p className="text-sm font-medium tracking-wide text-muted-foreground">
-                OPEN SOURCE INITIATIVE
+                PREMIUM FILIPINO FLOWERS
               </p>
             </div>
 
@@ -139,23 +139,15 @@ const Hero: React.FC = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.5 }}
               >
-                Koamishin
+                Philippine
               </motion.span>
               <motion.span
-                className="text-primary"
+                className="text-primary ml-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.3, delay: 1.5 }}
+                transition={{ duration: 0.5, delay: 1.5 }}
               >
-                .
-              </motion.span>
-              <motion.span
-                className="font-mono"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 1.8 }}
-              >
-                org
+                Flowers
               </motion.span>
             </span>
             <motion.span
@@ -165,7 +157,7 @@ const Hero: React.FC = () => {
               transition={{ duration: 0.5, delay: 2.3 }}
             >
               <TypingText
-                text="Elegantly Crafted Open Source Solutions"
+                text="Bringing Beauty to Every Occasion"
                 delay={2500}
               />
             </motion.span>
@@ -180,22 +172,32 @@ const Hero: React.FC = () => {
           transition={{ duration: 0.6, delay: 3 }}
         >
           <p className="mb-6 text-xl leading-relaxed text-foreground/80 md:text-2xl">
-            We craft high-quality, open-source{" "}
+            We specialize in premium{" "}
             <motion.span
-              className="font-mono font-semibold text-primary"
+              className="font-serif font-semibold text-primary"
               whileHover={{
                 scale: 1.05,
                 color: "var(--primary)",
               }}
             >
-              Laravel
+              artificial
             </motion.span>{" "}
-            packages and applications designed to{" "}
+            and{" "}
+            <motion.span
+              className="font-serif font-semibold text-primary"
+              whileHover={{
+                scale: 1.05,
+                color: "var(--primary)",
+              }}
+            >
+              natural flowers
+            </motion.span>{" "}
+            from the Philippines, designed to{" "}
             <motion.span
               className="relative inline-block"
               whileHover={{ y: -2 }}
             >
-              accelerate
+              beautify
               <motion.span
                 className="absolute bottom-0 left-0 h-[3px] w-0 bg-primary/40"
                 initial={{ width: "0%" }}
@@ -203,19 +205,19 @@ const Hero: React.FC = () => {
                 transition={{ duration: 1.5, delay: 4, ease: "easeInOut" }}
               />
             </motion.span>{" "}
-            development and promote{" "}
+            your special moments with{" "}
             <motion.span
               className="font-serif italic"
               whileHover={{ scale: 1.05 }}
             >
-              best practices
+              Filipino artistry
             </motion.span>
             .
           </p>
           <p className="text-base text-muted-foreground">
-            Our mission is to empower developers worldwide by providing
-            reliable, well-documented, and community-driven tools – completely
-            free.
+            From wedding bouquets to home decorations, our handcrafted floral
+            arrangements bring the beauty and craftsmanship of the Philippines
+            to your doorstep.
           </p>
         </motion.div>
 
@@ -288,8 +290,8 @@ const Hero: React.FC = () => {
                 whileHover={{ x: "100%" }}
                 transition={{ duration: 0.8 }}
               />
-              <Github className="mr-2 h-5 w-5" />
-              Explore on GitHub
+              <ShoppingBag className="mr-2 h-5 w-5" />
+              Shop Now
               <motion.div
                 className="ml-2"
                 whileHover={{ x: 3 }}
@@ -307,9 +309,9 @@ const Hero: React.FC = () => {
               className="border-border/40 bg-background/50 text-base font-medium backdrop-blur-sm"
               asChild
             >
-              <a href="/docs" className="group flex items-center gap-2">
-                View Documentation
-                <ExternalLink className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:translate-y-[-1px]" />
+              <a href="#contact" className="group flex items-center gap-2">
+                Contact Us
+                <Phone className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:translate-y-[-1px]" />
               </a>
             </Button>
           </motion.div>
@@ -331,7 +333,7 @@ const Hero: React.FC = () => {
         <pre className="font-mono text-xs text-muted-foreground">
           <code>
             <TypingText
-              text="composer require koamishin/package"
+              text="🌸 Fresh flowers daily"
               delay={5000}
             />
           </code>
@@ -351,7 +353,7 @@ const Hero: React.FC = () => {
         }}
       >
         <span className="text-xs font-medium text-foreground">
-          100% Open Source
+          100% Handcrafted
         </span>
       </motion.div>
     </section>

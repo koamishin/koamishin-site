@@ -15,8 +15,8 @@ import { ThemeToggle } from "./ThemeToggle";
 // Define navigation items
 const navItems = [
   { name: "About", href: "#about" },
-  { name: "Projects", href: "#projects" },
-  { name: "Philosophy", href: "#philosophy" },
+  { name: "Products", href: "#products" },
+  { name: "Services", href: "#services" },
   // Add more sections as needed
 ];
 
@@ -102,8 +102,7 @@ const Header: React.FC = () => {
             {/* Optional Logo Icon Here */}
             {/* Using styles similar to Hero */}
             <span className="font-serif text-xl font-bold tracking-tight text-foreground">
-              Koamishin<span className="text-primary">.</span>
-              <span className="font-mono font-normal">org</span>
+              Philippine<span className="text-primary">Flowers</span>
             </span>
           </a>
         </div>
@@ -159,8 +158,7 @@ const Header: React.FC = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span className="font-serif text-lg font-bold tracking-tight text-foreground">
-                      Koamishin<span className="text-primary">.</span>
-                      <span className="font-mono font-normal">org</span>
+                      Philippine<span className="text-primary">Flowers</span>
                     </span>
                   </a>
                 </SheetTitle>
@@ -194,17 +192,15 @@ const Header: React.FC = () => {
                     </a>
                   </SheetClose>
                 ))}
-                {/* GitHub Button in Mobile Menu */}
+                {/* Contact Button in Mobile Menu */}
                 <SheetClose asChild>
                   <Button variant="outline" asChild className="mt-4">
                     <a
-                      href="https://github.com/Koamishin"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href="#contact"
                       className="flex w-full items-center justify-center"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Github className="mr-2 h-4 w-4" /> Explore on GitHub
+                      Contact Us
                     </a>
                   </Button>
                 </SheetClose>
@@ -212,17 +208,14 @@ const Header: React.FC = () => {
             </SheetContent>
           </Sheet>
         </div>
-        {/* GitHub Button - Desktop */}
+        {/* Contact Button - Desktop */}
         <div className="hidden items-center space-x-2 md:flex">
           <Button variant="ghost" size="sm" asChild className="group">
             <a
-              href="https://github.com/Koamishin"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="View Koamishin on GitHub"
+              href="#contact"
+              aria-label="Contact Philippine Flowers"
             >
-              <Github className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
-              GitHub
+              Contact Us
             </a>
           </Button>
           <ThemeToggle />

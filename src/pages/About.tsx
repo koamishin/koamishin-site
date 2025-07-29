@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Github, Users, Code, HeartHandshake } from "lucide-react";
+import { MapPin, Users, Flower2, HeartHandshake } from "lucide-react";
 // import { cn } from "@/lib/utils";
 
 interface ValueCardProps {
@@ -55,22 +55,22 @@ const ValueCard: React.FC<ValueCardProps> = ({ icon, title, description }) => {
 const About: React.FC = () => {
   const values = [
     {
-      icon: <Users className="h-6 w-6" />,
-      title: "Community-Driven",
+      icon: <MapPin className="h-6 w-6" />,
+      title: "Philippine Heritage",
       description:
-        "We're not a company; we're a collective of passionate developers collaborating to create solutions that benefit everyone.",
+        "Proudly sourcing and crafting flowers with traditional Filipino artistry, bringing authentic beauty from our islands to your home.",
     },
     {
-      icon: <Code className="h-6 w-6" />,
-      title: "Quality-Focused",
+      icon: <Flower2 className="h-6 w-6" />,
+      title: "Premium Quality",
       description:
-        "Every project adheres to modern best practices with clean code, comprehensive testing, and thorough documentation.",
+        "Every flower is carefully selected and crafted to meet the highest standards, ensuring lasting beauty for your special moments.",
     },
     {
       icon: <HeartHandshake className="h-6 w-6" />,
-      title: "Open Source Advocates",
+      title: "Customer Dedication",
       description:
-        "We believe in the power of open source to foster innovation, encourage learning, and create more accessible technology.",
+        "We believe in creating meaningful connections through flowers, providing personalized service and care for every customer.",
     },
   ];
 
@@ -119,18 +119,18 @@ const About: React.FC = () => {
             whileHover={{ y: -2 }}
           >
             <p className="text-sm font-medium text-muted-foreground">
-              OUR MISSION
+              OUR STORY
             </p>
           </motion.div>
 
           <h2 className="mb-6 font-serif text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-            Who We Are
+            About Philippine Flowers
           </h2>
 
           <p className="text-lg text-foreground/80">
-            Koamishin is a collective of passionate developers dedicated to
-            building high-quality, practical Laravel applications that empower
-            the community.
+            Philippine Flowers is a family-owned business dedicated to bringing
+            the natural beauty and artistry of the Philippines to your special
+            moments through premium artificial and natural flowers.
           </p>
         </motion.div>
 
@@ -149,7 +149,7 @@ const About: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Our focus is on creating essential tools like{" "}
+              Our passion lies in creating beautiful{" "}
               <motion.span
                 className="font-medium text-foreground"
                 whileHover={{
@@ -157,7 +157,7 @@ const About: React.FC = () => {
                   transition: { duration: 0.2 },
                 }}
               >
-                Content Management Systems
+                Wedding Bouquets
               </motion.span>
               ,{" "}
               <motion.span
@@ -167,9 +167,9 @@ const About: React.FC = () => {
                   transition: { duration: 0.2 },
                 }}
               >
-                Point of Sale systems
+                Event Arrangements
               </motion.span>
-              , and versatile{" "}
+              , and stunning{" "}
               <motion.span
                 className="font-medium text-foreground"
                 whileHover={{
@@ -177,26 +177,10 @@ const About: React.FC = () => {
                   transition: { duration: 0.2 },
                 }}
               >
-                Business Systems
+                Home Decorations
               </motion.span>{" "}
-              – all shared freely on{" "}
-              <motion.a
-                href="https://github.com/Koamishin"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative inline-flex items-center font-medium text-foreground"
-                whileHover={{ scale: 1.05 }}
-              >
-                <Github className="mr-1 h-4 w-4" />
-                GitHub
-                <motion.span
-                  className="absolute bottom-0 left-0 h-[1px] w-full bg-primary"
-                  initial={{ scaleX: 0, originX: 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.a>
-              .
+              – all crafted with the finest materials and traditional Filipino
+              artistry that has been passed down through generations.
             </motion.p>
 
             <motion.p
@@ -205,10 +189,10 @@ const About: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              We believe in the power of open source to foster innovation and
-              empower the community. By creating tools that solve real-world
-              problems, we aim to make technology more accessible and efficient
-              for everyone.
+              We believe in the power of flowers to bring joy, celebrate love,
+              and create lasting memories. By combining traditional Filipino
+              craftsmanship with modern design, we aim to make every occasion
+              more beautiful and meaningful for our customers.
             </motion.p>
           </motion.div>
         </div>
@@ -256,25 +240,23 @@ const About: React.FC = () => {
           </motion.div>
 
           <h3 className="mb-3 text-2xl font-bold text-foreground">
-            Join Our Community
+            Experience Our Craftsmanship
           </h3>
 
           <p className="mb-6 text-muted-foreground">
-            We're always looking for passionate developers to collaborate with
-            us. Whether you're a seasoned pro or just starting out, your
-            contribution matters.
+            We invite you to discover the beauty of Philippine flowers. Whether
+            you're planning a wedding, decorating your home, or celebrating a
+            special occasion, we're here to help make it unforgettable.
           </p>
 
           <motion.a
-            href="https://github.com/Koamishin"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contact"
             className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Github className="mr-2 h-4 w-4" />
-            Contribute on GitHub
+            <HeartHandshake className="mr-2 h-4 w-4" />
+            Get in Touch
           </motion.a>
         </motion.div>
       </div>
@@ -303,7 +285,7 @@ const About: React.FC = () => {
               ease: "linear",
             }}
           >
-            <Code className="h-8 w-8 text-primary/60" />
+            <Flower2 className="h-8 w-8 text-primary/60" />
           </motion.div>
         </div>
       </motion.div>
