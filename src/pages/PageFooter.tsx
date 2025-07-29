@@ -43,26 +43,21 @@ const PageFooter: React.FC = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Contact Us</h4>
             <div className="space-y-3">
+             
               <a
-                href="tel:+639123456789"
-                className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Phone className="mr-2 h-4 w-4" />
-                +63 912 345 6789
-              </a>
-              <a
-                href="mailto:flowers@koamishin.org"
+                href="mailto:balangtadv@gmail.com"
                 className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Mail className="mr-2 h-4 w-4" />
-                flowers@koamishin.org
+                balangtadv@gmail.com
               </a>
               <div className="flex items-start text-sm text-muted-foreground">
                 <MapPin className="mr-2 h-4 w-4 mt-0.5 flex-shrink-0" />
                 <span>
-                  123 Flower Street<br />
-                  Makati City, Metro Manila<br />
-                  Philippines 1200
+                  <br />
+                  8752 Paseo de Roxas Street, <br />
+                  San Miguel Village, Barangay Poblacion,<br />
+                   Makati City, Metro Manila
                 </span>
               </div>
             </div>
