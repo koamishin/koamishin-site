@@ -1,0 +1,39 @@
+# System Architecture
+
+KoaScholarships follows a robust architecture designed for data integrity and scalability.
+
+## Application Lifecycle
+
+The core of the system is the **Scholarship Application Lifecycle**. We enforce a strict state machine to manage applications as they move through various phases:
+
+1. **Application Phase**
+   - Student creates profile
+   - Applies for a Program
+   - Submits Application
+
+2. **Verification Phase**
+   - `documents_pending` → `documents_under_review`
+   - Admins review uploads. Rejections revert status for resubmission.
+
+3. **Approval Phase**
+   - `documents_approved` → `eligibility_verified` → `enrolled`
+   - System checks if student meets GPA/Unit criteria.
+
+4. **Maintenance Phase**
+   - `service_pending` → `service_completed`
+   - Students must submit Community Service Reports.
+
+5. **Disbursement Phase**
+   - `disbursement_pending` → `disbursement_processed` → `completed`
+   - Financial aid is released.
+
+## Tech Stack
+
+The project leverages a modern, type-safe stack:
+
+- **Backend**: Laravel 10/11
+- **Frontend**: React 19 + TypeScript
+- **Routing**: Inertia.js (Server-side routing, SPA feel)
+- **Styling**: Tailwind CSS 4
+- **Components**: Shadcn UI & Radix UI
+- **Quality Assurance**: PHPStan, Pest PHP, Rector

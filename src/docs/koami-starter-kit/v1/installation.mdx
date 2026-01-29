@@ -1,0 +1,46 @@
+# Installation
+
+Get up and running with KoamiStarterKit in minutes.
+
+## Prerequisites
+
+Before you begin, ensure your system meets the following requirements:
+
+- **PHP**: 8.2 or higher
+- **Composer**: Dependency manager for PHP
+- **Node.js**: LTS version recommended
+- **NPM** or **Bun**: Package manager
+
+## Creating a New Project
+
+You can create a new project using Composer. This will download the starter kit and install all PHP dependencies.
+
+```bash
+composer create-project koamishin/koamistarterkit my-app
+cd my-app
+```
+
+## Setup & Configuration
+
+Once installed, personalize the starter kit with your own project details using our built-in setup wizard. This tool helps you configure everything from proper author details to Docker environments.
+
+```bash
+php artisan setup:starter-kit
+```
+
+<Callout type="tip" title="What does this do?">
+This interactive tool will:
+- 🎨 Personalize `composer.json` with your author and package details
+- 🐳 Configure Docker settings (Docker Hub vs GHCR)
+- 🤖 Update GitHub Actions workflows to use your repository and registry
+</Callout>
+
+## Development Server
+
+Start the development environment with one simple command. This runs both the Laravel server and the Vite development server concurrently.
+
+```bash
+composer run dev
+```
+
+Your application should now be accessible at `http://localhost:8000`.

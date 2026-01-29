@@ -1,0 +1,65 @@
+# Installation
+
+Get KoaScholarships up and running on your local machine.
+
+## Prerequisites
+
+- **PHP**: 8.2+
+- **Node.js** & **NPM**
+- **Composer**
+- **MySQL** or **PostgreSQL**
+
+## Setup Guide
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/koamishin/KoaScholarships.git
+cd KoaScholarships
+```
+
+### 2. Install Dependencies
+
+Install both backend and frontend dependencies:
+
+```bash
+composer install
+npm install
+```
+
+### 3. Environment Setup
+
+Copy the example environment file and generate your application key:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+<Callout type="warning" title="Database Configuration">
+Make sure to configure your database credentials (DB_HOST, DB_DATABASE, DB_USERNAME, DB_PASSWORD) in the `.env` file before proceeding.
+</Callout>
+
+### 4. Database Migration & Seeding
+
+This will set up the schema and populate the database with default roles, admin accounts, and sample scholarship programs.
+
+```bash
+php artisan migrate --seed
+```
+
+### 5. Start Development Server
+
+Run the development server. You'll need two terminals:
+
+**Terminal 1 (Vite):**
+```bash
+npm run dev
+```
+
+**Terminal 2 (Laravel):**
+```bash
+php artisan serve
+```
+
+Your application should now be accessible at `http://localhost:8000`.

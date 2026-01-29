@@ -1,0 +1,60 @@
+# Features
+
+Deep dive into the powerful features that come out-of-the-box with KoamiStarterKit.
+
+## 🔐 Authentication
+
+Powered by **Laravel Fortify**, we provide a complete authentication system that is secure by default.
+
+- **Login & Registration**: Customizable views built with Vue 3.
+- **Two-Factor Authentication (2FA)**: Built-in support for authentication apps.
+- **Email Verification**: Ensure users have valid email addresses.
+- **Profile Management**: Update profile information and passwords.
+
+## 👥 Roles & Permissions
+
+We use **Spatie Laravel Permission** to handle authorization.
+
+- **Admins**: Have access to the **Filament** backend dashboard.
+- **Users**: Have access to the **Inertia.js** frontend application.
+- **Role Management**: Easily assign roles to users.
+
+## 🕵️‍♂️ User Impersonation
+
+Admins can impersonate other users to see exactly what they see. This is crucial for debugging and support.
+
+- **Banner**: A visible banner appears when impersonating to prevent confusion.
+- **Quick Leave**: One-click action to return to your admin account.
+
+## 🎛️ Admin Panel
+
+A pre-configured **FilamentPHP** dashboard is ready for you.
+
+- **User Management**: Create, edit, and manage users.
+- **Extensible**: Easily add your own resources and pages using Filament's powerful tools.
+
+## 🛠️ Type-Safe Routing with Wayfinder
+
+Forget about broken links or hardcoded URLs in your JavaScript. **Wayfinder** generates TypeScript definitions for your Laravel routes.
+
+```typescript
+// Instead of this:
+// route('users.show', { user: 1 })
+
+// You get type safety:
+route('users.show', { user: 1 }) // Intellisense knows 'user' is required
+```
+
+## ⚡ High Performance
+
+- **Laravel Octane**: Supercharge your application with Swoole or RoadRunner.
+- **Inertia.js v2**: Protocol-based navigation for a seamless SPA feel.
+- **Vite**: Ultra-fast build tool for instant HMR (Hot Module Replacement).
+
+## 🚢 Production Ready
+
+We don't just leave you with code; we provide the operational tools too.
+
+- **Docker**: Development environment powered by Laravel Sail, production ready with Dockerfile.
+- **CI/CD**: GitHub Actions workflows for testing and deployment.
+- **Quality Tools**: Pint (Code Style), PHPStan (Static Analysis), and Rector (Refactoring) are pre-configured.

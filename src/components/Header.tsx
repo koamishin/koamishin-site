@@ -17,7 +17,7 @@ const navItems = [
   { name: "About", href: "#about" },
   { name: "Projects", href: "#projects" },
   { name: "Philosophy", href: "#philosophy" },
-  // Add more sections as needed
+  { name: "Docs", href: "/docs" },
 ];
 
 const Header: React.FC = () => {
@@ -33,7 +33,10 @@ const Header: React.FC = () => {
 
   // Detect active section on scroll
   useEffect(() => {
-    const sections = navItems.map((item) => document.querySelector(item.href));
+    // Only observe sections that correspond to hash links
+    const sections = navItems
+      .filter(item => item.href.startsWith("#"))
+      .map((item) => document.querySelector(item.href));
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -115,12 +118,12 @@ const Header: React.FC = () => {
               href={item.href}
               className={cn(
                 "relative py-1 transition-colors hover:text-primary",
-                activeLink === item.href.substring(1) // Remove '#' for comparison
+                activeLink === (item.href.startsWith("#") ? item.href.substring(1) : item.href) // Handle active check safely
                   ? "text-primary font-semibold"
                   : "text-muted-foreground",
               )}
               aria-current={
-                activeLink === item.href.substring(1) ? "page" : undefined
+                activeLink === (item.href.startsWith("#") ? item.href.substring(1) : item.href) ? "page" : undefined
               }
             >
               {item.name}
@@ -130,7 +133,7 @@ const Header: React.FC = () => {
                 variants={underlineVariants}
                 initial="hidden"
                 animate={
-                  activeLink === item.href.substring(1) ? "visible" : "hidden"
+                  activeLink === (item.href.startsWith("#") ? item.href.substring(1) : item.href) ? "visible" : "hidden"
                 }
               />
             </a>
