@@ -121,7 +121,7 @@ export function getVersion(project: DocProject, version: string): DocVersion | u
     return project.versions.find((v) => v.version === version);
 }
 
-export function getDefaultPage(project: DocProject, version: DocVersion): string {
+export function getDefaultPage(_project: DocProject, version: DocVersion): string {
     const firstSection = version.sections[0];
     const firstPage = firstSection?.pages[0];
     return firstPage?.slug || "introduction";

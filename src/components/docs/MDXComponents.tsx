@@ -9,7 +9,7 @@ function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
             ? children.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "")
             : undefined;
 
-        const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+        const Tag = `h${level}` as React.ElementType;
 
         const styles = {
             1: "scroll-m-20 text-4xl font-bold tracking-tight font-serif text-foreground lg:text-5xl mb-6 mt-2",
