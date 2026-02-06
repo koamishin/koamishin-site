@@ -1,16 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import {
-  Network,
-  Sparkles,
-  UserCircle,
-  Users,
-  Code,
-  ArrowRight,
-  Github,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Network, Sparkles, Users, Code } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
