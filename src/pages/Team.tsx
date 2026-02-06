@@ -12,6 +12,7 @@ import {
   Building2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Helmet } from "react-helmet-async";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -45,7 +46,7 @@ const artisans: Artisan[] = [
     username: "jayreid017",
     role: "UI/UX Designer & QA",
     bio: "Building with purpose. Contributing to the Koamishin ecosystem to empower developers worldwide.",
-    image: "public/teams/ba.jpeg",
+    image: "/teams/ba.jpeg",
     location: "Global",
     stats: {
       repos: 4,
@@ -63,7 +64,7 @@ const artisans: Artisan[] = [
     username: "SorenOutis",
     role: "Full Stack Developer",
     bio: "Crafting code with precision. Dedicated to open source excellence and community growth.",
-    image: "public/teams/ob.jpeg",
+    image: "/teams/ob.jpeg",
     location: "Remote",
     stats: {
       repos: 4,
@@ -81,7 +82,7 @@ const artisans: Artisan[] = [
     username: "yukazakiri",
     role: "Full Stack Engineer",
     bio: "Just a Chill Writer. Bringing creativity, clarity, and chill vibes to the codebase.",
-    image: "public/teams/lo.webp",
+    image: "/teams/lo.webp",
     location: "Koamishin Org",
     company: "Koamishin",
     stats: {
@@ -124,7 +125,25 @@ const Team: React.FC = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-background pt-32 pb-32">
+    <>
+      <Helmet>
+        <title>Our Team - Koamishin.org</title>
+        <meta name="description" content="Meet the core team behind Koamishin - passionate developers building high-quality open source Laravel applications." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://koamishin.org/team" />
+        <meta property="og:title" content="Our Team - Koamishin.org" />
+        <meta property="og:description" content="Meet the core team behind Koamishin - passionate developers building high-quality open source Laravel applications." />
+        <meta property="og:image" content="https://koamishin.org/og-image.png" />
+        <meta property="og:site_name" content="Koamishin.org" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://koamishin.org/team" />
+        <meta name="twitter:title" content="Our Team - Koamishin.org" />
+        <meta name="twitter:description" content="Meet the core team behind Koamishin - passionate developers building high-quality open source Laravel applications." />
+        <meta name="twitter:image" content="https://koamishin.org/og-image.png" />
+        <link rel="canonical" href="https://koamishin.org/team" />
+      </Helmet>
+      
+      <div ref={containerRef} className="min-h-screen bg-background pt-32 pb-32">
       <div className="container mx-auto px-6 md:px-12">
         <header ref={headerRef} className="mb-24 text-center max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full border border-primary/20 bg-primary/5">
@@ -281,7 +300,8 @@ const Team: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

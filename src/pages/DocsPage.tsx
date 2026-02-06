@@ -201,6 +201,18 @@ export function DocsPage() {
             <Helmet>
                 <title>{pageTitle} - {projectData.name} | Koamishin Docs</title>
                 <meta name="description" content={`${pageTitle} documentation for ${projectData.name}`} />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content={`https://koamishin.org/docs/${projectSlug}/${versionSlug}/${pagePath}`} />
+                <meta property="og:title" content={`${pageTitle} - ${projectData.name} | Koamishin Docs`} />
+                <meta property="og:description" content={`${pageTitle} documentation for ${projectData.name}`} />
+                <meta property="og:image" content="https://koamishin.org/og-image.png" />
+                <meta property="og:site_name" content="Koamishin.org" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:url" content={`https://koamishin.org/docs/${projectSlug}/${versionSlug}/${pagePath}`} />
+                <meta name="twitter:title" content={`${pageTitle} - ${projectData.name} | Koamishin Docs`} />
+                <meta name="twitter:description" content={`${pageTitle} documentation for ${projectData.name}`} />
+                <meta name="twitter:image" content="https://koamishin.org/og-image.png" />
+                <link rel="canonical" href={`https://koamishin.org/docs/${projectSlug}/${versionSlug}/${pagePath}`} />
             </Helmet>
 
             <DocLayout>
