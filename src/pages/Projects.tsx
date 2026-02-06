@@ -1,47 +1,34 @@
-import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { CheckCircle, Layers, ArrowUpRight, Github, BookOpen, Rocket, GraduationCap, Package, Gamepad2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Github,
-  ArrowUpRight,
-  BookOpen, // Icon for Documentation
-  Gamepad2,
-  GraduationCap,
-  Package,
-  CheckCircle, // Icon for features
-  Layers, // Icon for Tech Stack
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { docsConfig } from "@/config/docsConfig";
 
-// Expanded Interface for more project details
+gsap.registerPlugin(ScrollTrigger);
+
+const iconMap: Record<string, React.ReactNode> = {
+  Rocket: <Rocket className="h-10 w-10 text-primary" />,
+  GraduationCap: <GraduationCap className="h-10 w-10 text-primary" />,
+  Package: <Package className="h-10 w-10 text-primary" />,
+  Gamepad2: <Gamepad2 className="h-10 w-10 text-primary" />,
+};
+
 interface Project {
   icon: React.ReactNode;
   title: string;
   status?: "Work in progress" | "Archived" | "Active";
-  shortDescription: string; // Concise summary
-  longDescription: string; // More detailed explanation
-  features: string[]; // Key features list
-  techStack: string[]; // Core technologies used
+  shortDescription: string;
+  longDescription: string;
+  features: string[];
+  techStack: string[];
   repoUrl: string;
-  docsUrl?: string; // Optional documentation link
+  docsUrl?: string;
 }
 
-// Updated project data with more details
-import { docsConfig } from "@/config/docsConfig";
-import { Rocket } from "lucide-react";
-
-// Icon mapping
-const iconMap: Record<string, React.ReactNode> = {
-  Rocket: <Rocket className="h-12 w-12 text-primary" />,
-  GraduationCap: <GraduationCap className="h-12 w-12 text-primary" />,
-  Package: <Package className="h-12 w-12 text-primary" />,
-  Gamepad2: <Gamepad2 className="h-12 w-12 text-primary" />,
-};
-
-// Map docsConfig to Project interface
 const projectsData: Project[] = docsConfig.map(project => ({
-  icon: project.icon ? iconMap[project.icon] : <Package className="h-12 w-12 text-primary" />,
+  icon: project.icon ? iconMap[project.icon] : <Package className="h-10 w-10 text-primary" />,
   title: project.name,
   status: project.status,
   shortDescription: project.description,
@@ -49,203 +36,182 @@ const projectsData: Project[] = docsConfig.map(project => ({
   features: project.features || [],
   techStack: project.techStack || [],
   repoUrl: `https://github.com/${project.githubRepo}`,
-  docsUrl: `/docs/${project.slug}/${project.defaultVersion}/introduction` // Default to introduction
+  docsUrl: `/docs/${project.slug}/${project.defaultVersion}/introduction`
 }));
 
-// Animation variants
-const sectionVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.5 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 },
-  },
-};
-
 const Projects: React.FC = () => {
-  const shouldReduceMotion = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current,
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 85%",
+          },
+        }
+      );
+
+      itemsRef.current.forEach((item) => {
+        if (!item) return;
+
+        const icon = item.querySelector(".project-icon");
+        const title = item.querySelector(".project-title");
+        const desc = item.querySelector(".project-desc");
+        const features = item.querySelector(".project-features");
+        const actions = item.querySelector(".project-actions");
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: item,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        });
+
+        tl.fromTo(icon, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.7)" })
+          .fromTo(title, { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5 }, "-=0.3")
+          .fromTo(desc, { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5 }, "-=0.3")
+          .fromTo(features, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, "-=0.2")
+          .fromTo(actions, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, "-=0.3");
+      });
+
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="relative overflow-hidden py-24 md:py-36">
-      {/* Consistent background */}
-      <div className="absolute inset-0 -z-10 bg-muted/30">
-        {/* Add subtle background elements if desired, similar to About */}
-      </div>
-
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <motion.div
-          className="mx-auto mb-16 max-w-2xl text-center"
-          variants={!shouldReduceMotion ? sectionVariants : undefined}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <h2 className="font-serif text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            Our Open Source Work
+    <section ref={containerRef} className="relative overflow-hidden bg-background py-32 md:py-48">
+      <div className="container mx-auto px-6 md:px-12">
+        
+        <div ref={headerRef} className="mx-auto mb-32 max-w-4xl text-center relative">
+          <div className="mb-6 flex items-center justify-center gap-3">
+            <span className="h-[1px] w-8 bg-primary/50" />
+            <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-primary">
+              Our Craft
+            </span>
+            <span className="h-[1px] w-8 bg-primary/50" />
+          </div>
+          
+          <h2 className="mb-8 font-serif text-5xl font-bold leading-[1.1] tracking-tighter text-foreground md:text-7xl">
+            Building the foundations of modern <span className="italic text-primary">web artisans</span>.
           </h2>
-          <p className="mt-6 text-lg leading-8 text-foreground/80">
-            Discover the tools and applications we're building to empower
-            developers and streamline workflows within the Laravel ecosystem.
+          
+          <p className="mx-auto max-w-2xl text-xl font-light leading-relaxed text-muted-foreground">
+            Explore our open-source contributions. From robust starter kits to specialized management systems, 
+            each project is crafted with care and built to last.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Alternating Project Blocks */}
-        <div className="space-y-20 md:space-y-28">
+        <div className="flex flex-col gap-32">
           {projectsData.map((project, index) => (
-            <motion.article
-              key={project.title}
-              className={cn(
-                "flex flex-col gap-10 md:gap-16 lg:items-center",
-                index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse", // Alternating layout
-              )}
-              variants={!shouldReduceMotion ? itemVariants : undefined}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }} // Trigger animation when 20% visible
+            <div 
+              key={project.title} 
+              ref={(el) => {
+                  itemsRef.current[index] = el;
+              }}
+              className="group relative"
             >
-              {/* Visual Column (Icon) */}
-              <motion.div
-                className="flex flex-shrink-0 justify-center md:w-1/3"
-                whileHover={
-                  !shouldReduceMotion ? { scale: 1.05, rotate: 2 } : {}
-                }
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="rounded-full bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-8 shadow-lg ring-1 ring-border/10">
-                  {project.icon}
-                </div>
-              </motion.div>
+              <div className="absolute -left-12 top-0 hidden font-serif text-6xl font-bold text-foreground/5 lg:block" style={{ writingMode: "vertical-rl" }}>
+                 第{["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"][index % 10]}章
+              </div>
 
-              {/* Textual Content Column */}
-              <div className="md:w-2/3">
-                {project.status && (
-                  <Badge
-                    variant={
-                      project.status === "Work in progress"
-                        ? "secondary"
-                        : "outline"
-                    }
-                    className="mb-3 capitalize"
-                  >
-                    {project.status}
-                  </Badge>
-                )}
-                <h3 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-foreground md:text-4xl">
-                  {project.title}
-                </h3>
-                <p className="mt-4 text-lg text-foreground/80">
-                  {project.longDescription}
-                </p>
+              {index !== projectsData.length - 1 && (
+                <div className="absolute left-8 top-full h-32 w-[1px] bg-gradient-to-b from-border to-transparent md:left-1/2 md:-ml-[0.5px]" />
+              )}
 
-                {/* Key Features */}
-                <div className="mt-6">
-                  <h4 className="mb-3 flex items-center text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                    <CheckCircle className="mr-2 h-4 w-4 text-primary" />
-                    Key Features
-                  </h4>
-                  <ul className="space-y-2 text-foreground/90">
-                    {project.features.map((feature) => (
-                      <li key={feature} className="flex items-start">
-                        <CheckCircle className="mr-3 mt-1 h-4 w-4 flex-shrink-0 text-green-500" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Tech Stack */}
-                <div className="mt-6">
-                  <h4 className="mb-3 flex items-center text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                    <Layers className="mr-2 h-4 w-4 text-primary" />
-                    Tech Stack
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {project.techStack.map((tech) => (
-                      <Badge
-                        key={tech}
-                        variant="secondary"
-                        className="font-mono text-xs"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
+              <div className={`flex flex-col gap-12 md:flex-row ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}>
+                
+                <div className="flex flex-col items-start md:w-1/3 md:items-center">
+                  <div className="project-icon relative z-10 flex h-32 w-32 items-center justify-center rounded-sm border border-primary/20 bg-background shadow-2xl shadow-primary/10 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
+                    {project.icon}
+                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary"></div>
+                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary"></div>
                   </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Button asChild className="group" size="lg">
-                    <a
-                      href={project.repoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`View ${project.title} on GitHub`}
-                      className="inline-flex items-center"
-                    >
-                      <Github className="mr-2 h-5 w-5" /> GitHub Repo
-                      <ArrowUpRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </a>
-                  </Button>
-                  {project.docsUrl && (
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      asChild
-                      className="group"
-                    >
-                      <a
-                        href={project.docsUrl}
-                        // target="_blank" // Open in same tab if it's internal docs
-                        // rel="noopener noreferrer"
-                        aria-label={`View documentation for ${project.title}`}
-                        className="inline-flex items-center"
-                      >
-                        <BookOpen className="mr-2 h-5 w-5" /> Documentation
-                        <ArrowUpRight className="ml-1 h-4 w-4 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                      </a>
-                    </Button>
+                  {project.status && (
+                    <Badge variant="outline" className="mt-6 border-primary/30 bg-primary/5 px-4 py-1 font-mono text-xs uppercase tracking-widest text-primary">
+                      {project.status}
+                    </Badge>
                   )}
                 </div>
+
+                <div className="md:w-2/3">
+                  <h3 className="project-title mb-6 font-serif text-4xl font-bold md:text-5xl">
+                    {project.title}
+                  </h3>
+                  
+                  <p className="project-desc mb-8 text-lg font-light leading-relaxed text-muted-foreground">
+                    {project.longDescription}
+                  </p>
+
+                  <div className="project-features mb-10 border-l-2 border-primary/20 pl-6">
+                    <h4 className="mb-4 font-mono text-xs uppercase tracking-widest text-foreground/60">Key Features</h4>
+                    <ul className="grid gap-3 sm:grid-cols-2">
+                      {project.features.map((feature, i) => (
+                        <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
+                          <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="project-actions flex flex-wrap gap-4">
+                    <Button asChild size="lg" className="h-12 rounded-none px-8 border border-primary bg-primary text-primary-foreground hover:bg-primary/90">
+                      <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                        <Github className="h-4 w-4" /> GitHub Repository
+                      </a>
+                    </Button>
+                    
+                    {project.docsUrl && (
+                      <Button asChild variant="outline" size="lg" className="h-12 rounded-none px-8 border-foreground/20 hover:bg-muted">
+                        <a href={project.docsUrl} className="flex items-center gap-2">
+                          <BookOpen className="h-4 w-4" /> Documentation <ArrowUpRight className="h-4 w-4 opacity-50" />
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="project-actions mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Layers className="h-4 w-4" />
+                      <span className="font-mono text-xs uppercase tracking-wider">Built With:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {project.techStack.map((tech, i) => (
+                        <span key={i} className="relative">
+                          {tech}
+                          {i !== project.techStack.length - 1 && <span className="ml-2 opacity-30">/</span>}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
               </div>
-            </motion.article>
+            </div>
           ))}
         </div>
 
-        {/* Final CTA */}
-        <motion.div
-          className="mt-24 text-center"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
-          <p className="mb-4 text-lg text-muted-foreground">
-            Want to see more or contribute?
-          </p>
-          <Button
-            variant="ghost"
-            asChild
-            className="group text-lg text-primary hover:text-primary"
-          >
-            <a
-              href="https://github.com/Koamishin"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Explore all our repositories on GitHub
-              <Github className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </a>
-          </Button>
-        </motion.div>
+        <div className="mt-48 text-center">
+           <p className="mb-6 font-serif text-2xl italic text-muted-foreground">"Open source is the heartbeat of innovation."</p>
+           <Button asChild variant="link" className="text-xl text-primary underline-offset-8">
+             <a href="https://github.com/Koamishin" target="_blank" rel="noopener noreferrer">
+               Explore all repositories on GitHub &rarr;
+             </a>
+           </Button>
+        </div>
+
       </div>
     </section>
   );

@@ -8,227 +8,163 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetClose,
-} from "@/components/ui/sheet"; // Added SheetClose
-import { Menu, Github, X } from "lucide-react"; // Added X for close button
+} from "@/components/ui/sheet";
+import { Menu, Github, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
-// Define navigation items
+
 const navItems = [
   { name: "About", href: "#about" },
   { name: "Projects", href: "#projects" },
   { name: "Philosophy", href: "#philosophy" },
+  { name: "Team", href: "/team" },
   { name: "Docs", href: "/docs" },
 ];
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeLink, setActiveLink] = useState<string>("");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Control Sheet state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Detect scroll position for styling
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 10); // Change style slightly after scrolling 10px
+    setIsScrolled(latest > 20);
   });
 
-  // Detect active section on scroll
   useEffect(() => {
-    // Only observe sections that correspond to hash links
-    const sections = navItems
-      .filter(item => item.href.startsWith("#"))
-      .map((item) => document.querySelector(item.href));
+    const handleScroll = () => {
+      const sections = navItems
+        .filter((item) => item.href.startsWith("#"))
+        .map((item) => document.querySelector(item.href));
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-            // Adjust threshold as needed
-            setActiveLink(entry.target.id);
-          }
-        });
-      },
-      {
-        rootMargin: "-50% 0px -50% 0px", // Trigger when section is near the vertical center
-        threshold: 0.1, // Need at least 10% visible
-      },
-    );
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveLink(entry.target.id);
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
 
-    sections.forEach((sec) => {
-      if (sec) observer.observe(sec);
-    });
-
-    return () => {
-      sections.forEach((sec) => {
-        if (sec) observer.unobserve(sec);
+      sections.forEach((section) => {
+        if (section) observer.observe(section);
       });
+
+      return () => {
+        sections.forEach((section) => {
+          if (section) observer.unobserve(section);
+        });
+      };
     };
+
+    handleScroll();
   }, []);
 
-  // Header animation variants
-  const headerVariants = {
-    top: {
-      backgroundColor: "rgba(var(--background-rgb), 0.6)", // More transparent at top
-      borderColor: "rgba(var(--border-rgb), 0)",
-      boxShadow: "none",
-    },
-    scrolled: {
-      backgroundColor: "rgba(var(--background-rgb), 0.85)", // Less transparent when scrolled
-      borderColor: "rgba(var(--border-rgb), 0.1)",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
-    },
-  };
-
-  // Underline animation for nav links
-  const underlineVariants = {
-    hidden: { scaleX: 0, originX: 0.5 },
-    visible: {
-      scaleX: 1,
-      originX: 0.5,
-      transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
-    },
-  };
 
   return (
     <motion.header
-      className="sticky top-0 z-50 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-transparent" // Use transparent base for animation
-      initial="top"
-      animate={isScrolled ? "scrolled" : "top"}
-      variants={headerVariants}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className={cn(
+        "fixed top-0 z-50 w-full transition-all duration-500 ease-in-out border-b border-transparent",
+        isScrolled 
+          ? "bg-background/80 backdrop-blur-md border-border py-2" 
+          : "bg-transparent py-6"
+      )}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="container mx-auto flex h-16 items-center px-4">
-        {" "}
-        {/* Increased height slightly */}
-        {/* Logo/Brand Name - Desktop */}
-        <div className="mr-6 hidden items-center md:flex">
-          <a className="flex items-center space-x-2" href="/">
-            {/* Optional Logo Icon Here */}
-            {/* Using styles similar to Hero */}
-            <span className="font-serif text-xl font-bold tracking-tight text-foreground">
-              Koamishin<span className="text-primary">.</span>
-              <span className="font-mono font-normal">org</span>
+      <div className="container mx-auto flex items-center justify-between px-6 md:px-12">
+        
+        <div className="flex items-center">
+          <a href="/" className="group relative z-50 flex items-center gap-2">
+             <div className="flex h-8 w-8 items-center justify-center bg-primary text-primary-foreground font-serif font-bold italic">
+               K
+             </div>
+            <span className="font-serif text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
+              Koamishin
             </span>
           </a>
         </div>
-        {/* Desktop Navigation */}
-        <nav className="mr-auto hidden items-center space-x-8 text-sm font-medium md:flex">
+
+        <nav className="hidden items-center gap-8 md:flex">
           {navItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
               className={cn(
-                "relative py-1 transition-colors hover:text-primary",
-                activeLink === (item.href.startsWith("#") ? item.href.substring(1) : item.href) // Handle active check safely
-                  ? "text-primary font-semibold"
-                  : "text-muted-foreground",
+                "group relative text-sm font-medium tracking-wide transition-colors hover:text-primary",
+                activeLink === (item.href.startsWith("#") ? item.href.substring(1) : item.href)
+                  ? "text-primary"
+                  : "text-muted-foreground"
               )}
-              aria-current={
-                activeLink === (item.href.startsWith("#") ? item.href.substring(1) : item.href) ? "page" : undefined
-              }
             >
               {item.name}
-              {/* Animated underline */}
-              <motion.span
-                className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                variants={underlineVariants}
-                initial="hidden"
-                animate={
-                  activeLink === (item.href.startsWith("#") ? item.href.substring(1) : item.href) ? "visible" : "hidden"
-                }
-              />
+              <span className="absolute -bottom-1 left-0 h-[1px] w-0 bg-primary transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
         </nav>
-        {/* Mobile Menu Trigger */}
-        <div className="flex flex-1 items-center justify-end md:hidden">
+
+        <div className="hidden items-center gap-4 md:flex">
+          <ThemeToggle />
+          <div className="h-6 w-[1px] bg-border" />
+          <a
+            href="https://github.com/Koamishin"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <Github className="h-5 w-5" />
+          </a>
+        </div>
+
+        <div className="flex items-center gap-4 md:hidden">
           <ThemeToggle />
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Open navigation menu"
-              >
+              <Button variant="ghost" size="icon" className="hover:bg-transparent">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] p-0">
-              <SheetHeader className="border-b p-4">
-                <SheetTitle className="text-left">
-                  {/* Logo/Brand Name - Mobile */}
-                  <a
-                    className="flex items-center space-x-2"
-                    href="/"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <span className="font-serif text-lg font-bold tracking-tight text-foreground">
-                      Koamishin<span className="text-primary">.</span>
-                      <span className="font-mono font-normal">org</span>
-                    </span>
-                  </a>
-                </SheetTitle>
-                {/* Add explicit close button inside sheet */}
-                <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-                  <X className="h-5 w-5" />
-                  <span className="sr-only">Close</span>
-                </SheetClose>
-              </SheetHeader>
-              <nav className="flex flex-col space-y-4 p-4">
-                {navItems.map((item) => (
-                  <SheetClose asChild key={item.name}>
-                    {" "}
-                    {/* Wrap link in SheetClose */}
-                    <a
-                      href={item.href}
-                      className={cn(
-                        "rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                        activeLink === item.href.substring(1)
-                          ? "bg-accent text-accent-foreground"
-                          : "text-muted-foreground",
-                      )}
-                      onClick={() => setIsMobileMenuOpen(false)} // Ensure close on click
-                      aria-current={
-                        activeLink === item.href.substring(1)
-                          ? "page"
-                          : undefined
-                      }
-                    >
-                      {item.name}
-                    </a>
+            <SheetContent side="right" className="w-full border-l border-border bg-background p-0 sm:w-[350px]">
+              <div className="flex h-full flex-col p-6">
+                <SheetHeader className="mb-8 flex flex-row items-center justify-between space-y-0">
+                  <SheetTitle className="font-serif text-2xl font-bold">Menu</SheetTitle>
+                  <SheetClose className="rounded-full bg-muted p-2 transition-colors hover:bg-primary/20 hover:text-primary">
+                    <X className="h-5 w-5" />
                   </SheetClose>
-                ))}
-                {/* GitHub Button in Mobile Menu */}
-                <SheetClose asChild>
-                  <Button variant="outline" asChild className="mt-4">
+                </SheetHeader>
+                
+                <nav className="flex flex-1 flex-col justify-center gap-8">
+                  {navItems.map((item, idx) => (
                     <a
-                      href="https://github.com/Koamishin"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex w-full items-center justify-center"
+                      key={item.name}
+                      href={item.href}
                       onClick={() => setIsMobileMenuOpen(false)}
+                      className="group flex items-center justify-between border-b border-border/50 pb-4 text-3xl font-light tracking-tight transition-colors hover:text-primary"
                     >
-                      <Github className="mr-2 h-4 w-4" /> Explore on GitHub
+                      <span className="font-serif italic">{item.name}</span>
+                      <span className="font-mono text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
+                        0{idx + 1}
+                      </span>
                     </a>
-                  </Button>
-                </SheetClose>
-              </nav>
+                  ))}
+                </nav>
+
+                <div className="mt-auto flex justify-between border-t border-border pt-6">
+                   <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                     Socials
+                   </span>
+                   <div className="flex gap-4">
+                     <a href="https://github.com/Koamishin" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-foreground">
+                       <Github className="h-5 w-5" />
+                     </a>
+                   </div>
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
-        </div>
-        {/* GitHub Button - Desktop */}
-        <div className="hidden items-center space-x-2 md:flex">
-          <Button variant="ghost" size="sm" asChild className="group">
-            <a
-              href="https://github.com/Koamishin"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="View Koamishin on GitHub"
-            >
-              <Github className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
-              GitHub
-            </a>
-          </Button>
-          <ThemeToggle />
         </div>
       </div>
     </motion.header>
