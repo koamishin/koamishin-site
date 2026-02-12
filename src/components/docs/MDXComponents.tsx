@@ -51,9 +51,14 @@ function CodeBlock({ children, className, ...props }: React.HTMLAttributes<HTMLP
 
     const copyToClipboard = async () => {
         const code = preRef.current?.textContent || "";
-        await navigator.clipboard.writeText(code);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+
+        try {
+            await navigator.clipboard.writeText(code);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy to clipboard:', err);
+        }
     };
 
     return (
@@ -261,16 +266,19 @@ function HorizontalRule(props: React.HTMLAttributes<HTMLHRElement>) {
 }
 
 // Image
-function Image({ alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) {
+function Image({ alt, className, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) {
     return (
         <figure className="my-6">
             <img
                 alt={alt}
-                className="rounded-lg border border-border"
+                className={cn(
+                    "w-full max-w-2xl mx-auto rounded-lg border border-border",
+                    className
+                )}
                 {...props}
             />
             {alt && (
-                <figcaption className="mt-2 text-center text-sm text-muted-foreground">
+                <figcaption className="mt-3 text-center text-sm text-muted-foreground italic">
                     {alt}
                 </figcaption>
             )}

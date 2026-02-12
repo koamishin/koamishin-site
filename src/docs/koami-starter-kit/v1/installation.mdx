@@ -1,46 +1,87 @@
+---
+title: Installation
+description: Get KoamiStarterKit running locally in under 5 minutes.
+---
+
 # Installation
 
-Get up and running with KoamiStarterKit in minutes.
+Get KoamiStarterKit running locally in under 5 minutes.
 
 ## Prerequisites
 
-Before you begin, ensure your system meets the following requirements:
+- **PHP 8.2+** with extensions: `ctype`, `curl`, `dom`, `fileinfo`, `filter`, `hash`, `mbstring`, `openssl`, `pcre`, `pdo`, `session`, `tokenizer`, `xml`
+- **Composer** - PHP dependency manager
+- **Node.js LTS** - JavaScript runtime
+- **Git** - Version control
 
-- **PHP**: 8.2 or higher
-- **Composer**: Dependency manager for PHP
-- **Node.js**: LTS version recommended
-- **NPM** or **Bun**: Package manager
+## Method 1: Laravel Installer (Recommended)
 
-## Creating a New Project
+```bash
+# Install Laravel CLI if you haven't
+composer global require laravel/installer
 
-You can create a new project using Composer. This will download the starter kit and install all PHP dependencies.
+# Create project
+laravel new my-app --using=koamishin/koamistarterkit
+cd my-app
+
+# Run setup wizard
+php artisan setup:starter-kit
+```
+
+## Method 2: Composer
 
 ```bash
 composer create-project koamishin/koamistarterkit my-app
 cd my-app
-```
-
-## Setup & Configuration
-
-Once installed, personalize the starter kit with your own project details using our built-in setup wizard. This tool helps you configure everything from proper author details to Docker environments.
-
-```bash
 php artisan setup:starter-kit
 ```
 
-<Callout type="tip" title="What does this do?">
-This interactive tool will:
-- 🎨 Personalize `composer.json` with your author and package details
-- 🐳 Configure Docker settings (Docker Hub vs GHCR)
-- 🤖 Update GitHub Actions workflows to use your repository and registry
-</Callout>
-
-## Development Server
-
-Start the development environment with one simple command. This runs both the Laravel server and the Vite development server concurrently.
+## Method 3: Git Clone (Contributors)
 
 ```bash
-composer run dev
+git clone https://github.com/koamishin/KoamiStarterKit.git my-app
+cd my-app
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+npm install
+php artisan setup:starter-kit
 ```
 
-Your application should now be accessible at `http://localhost:8000`.
+## What the Setup Wizard Does
+
+The `setup:starter-kit` command personalizes your project:
+
+- **Composer.json** - Updates author name, email, package name
+- **GitHub Actions** - Configures CI/CD workflows for your repo
+- **Docker** - Sets up container registry (Docker Hub or GHCR)
+
+> **Note:** The wizard is interactive. Just answer the prompts and it handles the configuration files automatically.
+
+## Verify Installation
+
+```bash
+# Start all services (Laravel, Vite, Queue, Logs)
+composer run dev
+
+# In another terminal, run tests
+composer test
+```
+
+Visit `http://localhost:8000` to see your app.
+
+## Default Login
+
+After installation, seed the database to create a default admin:
+
+```bash
+php artisan db:seed
+```
+
+Then login with:
+- **Email**: `admin@example.com`
+- **Password**: `password`
+
+> **Warning:** Change the default password immediately after first login.

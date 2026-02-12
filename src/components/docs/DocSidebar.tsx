@@ -16,7 +16,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { type DocProject, type DocVersion } from "@/config/docsConfig";
+import { type DocProject, type DocVersion, isPageGroup, type DocPage, type DocPageGroup } from "@/config/docsConfig";
 import React from "react";
 
 interface DocSidebarProps {
@@ -69,22 +69,50 @@ function SidebarNav({ project, version, currentPage }: DocSidebarProps) {
                                 className="overflow-hidden"
                             >
                                 <div className="border-l border-border pl-3 space-y-1 py-1 ml-3">
-                                    {section.pages.map((page) => {
-                                        const isActive = currentPage === page.slug;
-                                        return (
-                                            <Link
-                                                key={page.slug}
-                                                to={`/docs/${project.slug}/${version.version}/${page.slug}`}
-                                                className={cn(
-                                                    "block rounded-md px-3 py-2 text-sm transition-colors",
-                                                    isActive
-                                                        ? "bg-primary/10 text-primary font-medium"
-                                                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                                                )}
-                                            >
-                                                {page.title}
-                                            </Link>
-                                        );
+                                    {section.items.map((item) => {
+                                        if (isPageGroup(item)) {
+                                            return (
+                                                <div key={item.path} className="space-y-1">
+                                                    <div className="px-3 py-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                                        {item.title}
+                                                    </div>
+                                                    {item.pages.map((page) => {
+                                                        const slug = `${item.path}/${page.slug}`;
+                                                        const isActive = currentPage === slug;
+                                                        return (
+                                                            <Link
+                                                                key={slug}
+                                                                to={`/docs/${project.slug}/${version.version}/${slug}`}
+                                                                className={cn(
+                                                                    "block rounded-md px-3 py-2 text-sm transition-colors",
+                                                                    isActive
+                                                                        ? "bg-primary/10 text-primary font-medium"
+                                                                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                                                )}
+                                                            >
+                                                                {page.title}
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            );
+                                        } else {
+                                            const isActive = currentPage === item.slug;
+                                            return (
+                                                <Link
+                                                    key={item.slug}
+                                                    to={`/docs/${project.slug}/${version.version}/${item.slug}`}
+                                                    className={cn(
+                                                        "block rounded-md px-3 py-2 text-sm transition-colors",
+                                                        isActive
+                                                            ? "bg-primary/10 text-primary font-medium"
+                                                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                                    )}
+                                                >
+                                                    {item.title}
+                                                </Link>
+                                            );
+                                        }
                                     })}
                                 </div>
                             </motion.div>

@@ -1,0 +1,97 @@
+---
+title: Examples
+description: Common code patterns and snippets.
+---
+
+# Examples
+
+## Inertia Page
+
+```vue
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+import { Head } from '@inertiajs/vue3';
+
+defineProps<{
+    user: User;
+}>();
+</script>
+
+<template>
+    <Head title="Dashboard" />
+    <AppLayout>
+        <div class="p-6">
+            Welcome back, {{ user.name }}!
+        </div>
+    </AppLayout>
+</template>
+```
+
+## Route with Type Safety
+
+```php
+// routes/web.php
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+});
+```
+
+```typescript
+// Type-safe route usage
+import { route } from '@/wayfinder'
+
+// Autocomplete knows this route exists
+route('dashboard')  
+
+// Type error if params missing
+route('users.show', { user: 1 })
+```
+
+## Filament Admin Resource
+
+```php
+php artisan make:filament-resource Post
+
+// Generates:
+// app/Filament/Resources/PostResource.php
+// app/Filament/Resources/PostResource/Pages/
+```
+
+## Form with Validation
+
+```vue
+<script setup lang="ts">
+import { useForm } from '@inertiajs/vue3'
+
+const form = useForm({
+    email: '',
+    password: '',
+})
+
+const submit = () => {
+    form.post(route('login'))
+}
+</script>
+```
+
+## Check Permissions
+
+```vue
+<template>
+    <!-- In Vue component -->
+    <button v-if="$page.props.auth.can.editPosts">
+        Edit Post
+    </button>
+</template>
+```
+
+```php
+// In controller
+public function update(Post $post)
+{
+    $this->authorize('edit', $post);
+    // ...
+}
+```

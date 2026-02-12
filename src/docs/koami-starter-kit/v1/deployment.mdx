@@ -1,0 +1,94 @@
+---
+title: Deployment
+description: CI/CD, Docker, and production hosting.
+---
+
+# Deployment
+
+Ship your app with confidence.
+
+## Automated CI/CD
+
+Everything is pre-configured. Just run:
+
+```bash
+php artisan setup:starter-kit
+```
+
+This configures:
+- Container registry (Docker Hub or GitHub Container Registry)
+- GitHub Actions workflows
+- Repository secrets
+
+## Workflows
+
+### On Every Push
+
+`.github/workflows/ci.yml` runs:
+- Pint (code style)
+- PHPStan (static analysis)
+- Rector (refactoring)
+- Pest tests
+- Frontend linting
+
+### On Merge to Main
+
+`.github/workflows/auto-release.yml`:
+- Analyzes commits for semantic versioning
+- Builds multi-arch Docker image (FrankenPHP)
+- Pushes to registry
+- Creates GitHub release with changelog
+
+### Manual Release
+
+`.github/workflows/manual-official-release.yml`:
+- Promotes pre-release to stable
+- Tags image as `:latest`
+
+## Docker Image
+
+**Single container** includes:
+- FrankenPHP (web server)
+- Horizon (queues)
+- Scheduler (cron)
+- Pulse (monitoring)
+
+### Run Production
+
+```bash
+docker run -d \
+  --name my-app \
+  -p 80:8000 \
+  -e APP_KEY="base64:..." \
+  -e DB_CONNECTION=pgsql \
+  -e DB_HOST=your-db-host \
+  -e REDIS_HOST=your-redis-host \
+  ghcr.io/your-username/my-app:latest
+```
+
+### Docker Compose
+
+```yaml
+services:
+  app:
+    image: ghcr.io/your-username/my-app:latest
+    ports:
+      - '80:8000'
+    environment:
+      APP_KEY: '${APP_KEY}'
+      DB_HOST: db
+      REDIS_HOST: redis
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: secret
+
+  redis:
+    image: redis:alpine
+```
+
+> **Note:** The container is self-contained. No separate PHP-FPM, Nginx, or Queue workers needed.

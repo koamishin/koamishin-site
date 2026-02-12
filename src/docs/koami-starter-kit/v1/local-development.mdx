@@ -1,0 +1,117 @@
+---
+title: Local Development
+description: Daily development workflow, debugging, and common tasks.
+---
+
+# Local Development
+
+Your daily workflow with KoamiStarterKit.
+
+## Start Developing
+
+```bash
+composer run dev
+```
+
+This runs 4 processes in parallel:
+
+| Process | Purpose | URL |
+|---------|---------|-----|
+| Laravel | Backend API | http://localhost:8000 |
+| Vite | Frontend HMR | http://localhost:5173 |
+| Queue | Background jobs | - |
+| Pail | Real-time logs | Terminal output |
+
+## Daily Commands
+
+```bash
+# Run tests
+composer test
+
+# Fix code style
+composer lint
+
+# Type checking
+composer phpstan
+
+# Interactive shell
+php artisan tinker
+
+# Database reset
+php artisan migrate:fresh --seed
+```
+
+## Database
+
+**Default**: SQLite (zero config)
+
+```bash
+# File location
+database/database.sqlite
+```
+
+**Switch to MySQL/PostgreSQL**:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=my_app
+DB_USERNAME=root
+DB_PASSWORD=secret
+```
+
+Then run:
+
+```bash
+php artisan migrate
+```
+
+## Debugging
+
+**Real-time logs** (included in `composer run dev`):
+```bash
+php artisan pail
+```
+
+**Tinker examples**:
+```php
+php artisan tinker
+> User::factory()->create();
+> auth()->user()->assignRole('admin');
+```
+
+## VS Code Setup
+
+Recommended extensions:
+- Vue - Official (Volar)
+- Tailwind CSS IntelliSense
+- PHP Intelephense
+- ESLint + Prettier
+
+Settings (`.vscode/settings.json`):
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
+}
+```
+
+## Common Tasks
+
+**Add a new page**:
+1. Create Vue component: `resources/js/pages/MyPage.vue`
+2. Add route: `routes/web.php`
+3. Done - Wayfinder auto-generates types
+
+**Create admin resource**:
+```bash
+php artisan make:filament-resource Post
+```
+
+**Add UI component**:
+```bash
+npx shadcn-vue@latest add button
+```

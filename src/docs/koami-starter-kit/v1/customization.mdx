@@ -1,0 +1,63 @@
+---
+title: Customization
+description: Branding, theming, and UI customization.
+---
+
+# Customization
+
+Make KoamiStarterKit yours.
+
+## Branding
+
+### App Name
+
+```env
+APP_NAME="My Awesome App"
+```
+
+### Logo
+
+Edit these components:
+- `resources/js/components/KoamishinLogo.vue` - SVG icon only
+- `resources/js/components/AppLogo.vue` - Icon + text
+
+### Favicon
+
+Replace `public/favicon.ico`.
+
+## Theming
+
+### Import a Theme
+
+Find themes on [tweakcn.com](https://tweakcn.com):
+
+```bash
+php artisan theme:import https://tweakcn.com/api/themes/your-theme-id
+```
+
+This auto-generates the CSS and registers it in the theme switcher.
+
+### Manual Theme
+
+```bash
+php artisan theme:add my-theme
+```
+
+### Remove Theme
+
+```bash
+php artisan theme:remove theme-name
+```
+
+### Admin Panel Theme
+
+Edit `resources/css/filament/admin/theme.css` or modify `AdminPanelProvider`.
+
+## UI Components
+
+Shadcn Vue components live in `resources/js/components/ui/`. They're copied into your project, so edit them freely.
+
+```bash
+# Add new components
+npx shadcn-vue@latest add button card table
+```

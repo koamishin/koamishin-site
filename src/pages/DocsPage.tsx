@@ -3,7 +3,7 @@ import { useParams, Navigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { DocLayout } from "@/components/docs/DocLayout";
 import { mdxComponents } from "@/components/docs/MDXComponents";
-import { getProject, getVersion, getDefaultPage } from "@/config/docsConfig";
+import { getProject, getVersion, getDefaultPage, flattenSectionPages } from "@/config/docsConfig";
 import { AlertCircle, Github, GitFork } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -99,7 +99,8 @@ export function DocsPage() {
     let pageTitle = pagePath?.split("/").pop() || "Documentation";
     if (versionData) {
         for (const section of versionData.sections) {
-            const foundPage = section.pages.find((p) => p.slug === pagePath);
+            const pages = flattenSectionPages(section);
+            const foundPage = pages.find((p) => p.slug === pagePath);
             if (foundPage) {
                 pageTitle = foundPage.title;
                 break;

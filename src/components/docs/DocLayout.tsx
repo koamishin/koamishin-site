@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { DocSidebar } from "./DocSidebar";
-import { getProject, getVersion, getDefaultPage } from "@/config/docsConfig";
+import { getProject, getVersion, getDefaultPage, flattenSectionPages } from "@/config/docsConfig";
 import { TableOfContents } from "./TableOfContents";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -43,7 +43,8 @@ export function DocLayout({ children }: DocLayoutProps) {
     // Find current page title
     let currentPageTitle = page;
     for (const section of version.sections) {
-        const foundPage = section.pages.find((p) => p.slug === page);
+        const pages = flattenSectionPages(section);
+        const foundPage = pages.find((p) => p.slug === page);
         if (foundPage) {
             currentPageTitle = foundPage.title;
             break;

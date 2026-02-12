@@ -1,47 +1,83 @@
-# Architecture & Components
+# Architecture
 
-KoamiStarterKit is built on a modern, robust stack designed for developer experience and performance.
-
-## UI Components (Shadcn Vue)
-
-The starter kit includes a comprehensive suite of UI components from **Shadcn Vue** to jumpstart your development. These components are accessible, customizable, and drop-in ready.
-
-### Form Elements
-- `Input`, `Select`, `Checkbox`, `Radio Group`
-- `Switch`, `Slider`, `Textarea`
-- `Form`, `Combobox`
-
-### Feedback
-- `Alert`, `Badge`, `Progress`
-- `Skeleton`, `Spinner`
-- `Sonner` (Toast notifications)
-- `Tooltip`
-
-### Overlay
-- `Dialog` (Modals)
-- `Drawer`, `Sheet`
-- `Popover`, `Hover Card`
-- `Context Menu`, `Dropdown Menu`
-
-### Layout
-- `Card`, `Aspect Ratio`
-- `Resizable`, `Scroll Area`
-- `Separator`
-
-### Navigation
-- `Sidebar`, `Navigation Menu`
-- `Breadcrumb`, `Tabs`
-- `Menubar`, `Pagination`, `Stepper`
-
-### Data Display
-- `Table`, `Avatar`
-- `Accordion`, `Collapsible`
-- `Carousel`, `Calendar`
+Understanding how KoamiStarterKit is organized.
 
 ## Project Structure
 
-The project follows standard Laravel 12 conventions but includes specific directories for the frontend stack:
+```
+my-app/
+├── app/
+│   ├── Actions/          # Fortify actions (auth logic)
+│   ├── Console/          # Artisan commands
+│   ├── Filament/         # Admin panel resources
+│   ├── Http/
+│   │   ├── Controllers/  # Web controllers
+│   │   └── Middleware/   # Inertia, appearance, etc.
+│   └── Models/           # Eloquent models
+├── resources/
+│   ├── js/               # Vue 3 frontend
+│   │   ├── components/   # Vue components + Shadcn UI
+│   │   ├── layouts/      # Page layouts
+│   │   ├── pages/        # Inertia page components
+│   │   └── wayfinder/    # Auto-generated route types
+│   └── views/            # Blade templates
+├── routes/
+│   ├── web.php           # Application routes
+│   └── auth.php          # Fortify auth routes
+└── tests/                # Pest tests
+```
 
-- `resources/js/`: Contains the Vue 3 application and Inertia pages.
-- `resources/js/Components/ui/`: Where your Shadcn components live.
-- `app/Filament/`: Contains the Admin Panel resources and configuration.
+## Key Concepts
+
+### Hybrid Frontend
+
+Two separate frontends share the same backend:
+
+| Frontend | Technology | Users | Location |
+|----------|-----------|-------|----------|
+| Public | Vue 3 + Inertia | Regular users | `resources/js/pages` |
+| Admin | Filament (Blade/Livewire) | Admins only | `app/Filament` |
+
+### Wayfinder (Type-Safe Routes)
+
+Wayfinder scans your Laravel routes and generates TypeScript definitions:
+
+```typescript
+// Auto-generated - don't edit
+import { route } from '@/wayfinder'
+
+// Full type safety + autocomplete
+route('users.show', { user: 1 })  // ✓ knows 'user' is required
+route('users.index')              // ✓ no params needed
+```
+
+### Authentication Flow
+
+1. **Request** → Laravel Fortify handles validation
+2. **Session** → Authenticated via session cookie
+3. **Inertia** → Renders Vue components server-side
+4. **SPA feel** → Subsequent navigation is client-side
+
+## Security
+
+- **Auth**: Laravel Fortify (battle-tested)
+- **Roles**: Spatie Permissions (Admins vs Users)
+- **Impersonation**: Super-admins can login as other users (with visual banner)
+- **CSRF**: Automatic protection on all forms
+- **XSS**: Vue escapes HTML by default
+
+## Stack Summary
+
+| Concern | Technology |
+|---------|-----------|
+| Framework | Laravel 12 |
+| Frontend | Vue 3 + Inertia.js v2 |
+| Styling | Tailwind CSS 4 |
+| UI | Shadcn Vue |
+| Types | TypeScript |
+| Auth | Laravel Fortify |
+| Admin | FilamentPHP |
+| Routes | Wayfinder |
+| Queue | Laravel Queue + Redis |
+| Testing | Pest PHP |
+| Quality | Pint, PHPStan, Rector |
