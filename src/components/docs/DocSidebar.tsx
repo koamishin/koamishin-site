@@ -16,7 +16,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { type DocProject, type DocVersion, isPageGroup, type DocPage, type DocPageGroup } from "@/config/docsConfig";
+import { type DocProject, type DocVersion, isPageGroup } from "@/config/docsConfig";
 import React from "react";
 
 interface DocSidebarProps {
