@@ -46,7 +46,7 @@ const artisans: Artisan[] = [
     username: "jayreid017",
     roles: ["UI/UX Designer", "QA Engineer"],
     bio: "Building with purpose. Contributing to the Koamishin ecosystem to empower developers worldwide.",
-    image: "/teams/ba.jpeg",
+    image: "https://avatars.githubusercontent.com/u/253629901?v=4&s=1024",
     location: "Global",
     stats: {
       repos: 4,
@@ -68,7 +68,7 @@ const artisans: Artisan[] = [
       "Network Administrator",
     ],
     bio: "Crafting code with precision. Dedicated to open source excellence and community growth.",
-    image: "/teams/ob.jpeg",
+    image: "https://avatars.githubusercontent.com/u/156742647?v=4&s=1024",
     location: "Remote",
     stats: {
       repos: 4,
@@ -83,7 +83,7 @@ const artisans: Artisan[] = [
   {
     id: "003",
     name: "Louis",
-    username: "yukazakiri",
+    username: "Rui-Zen",
     roles: [
       "Full Stack Engineer",
       "Technical Lead",
@@ -91,17 +91,17 @@ const artisans: Artisan[] = [
       "DevOps",
     ],
     bio: "Just a Chill Writer. Bringing creativity, clarity, and chill vibes to the codebase.",
-    image: "/teams/lo.webp",
+    image: "https://avatars.githubusercontent.com/u/195420898?v=4&s=1024",
     location: "Koamishin Org",
     company: "Koamishin",
     stats: {
-      repos: 52,
-      followers: 6,
+      repos: 6,
+      followers: 1,
       contributions: "Lead",
     },
     tech: ["PHP", "TypeScript", "Writing"],
     socials: {
-      github: "https://github.com/yukazakiri",
+      github: "https://github.com/Rui-Zen",
     },
   },
 ];
