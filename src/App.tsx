@@ -11,11 +11,11 @@ import Team from "./pages/Team";
 import { Helmet } from "react-helmet-async";
 import { useEffect } from "react";
 
-const SITE_URL = "https://koamishin.org";
+const SITE_URL = "https://koamishin.com";
 const SITE_TITLE = "Koamishin.org - Open Source Laravel Solutions";
 const SITE_DESCRIPTION =
   "Koamishin is a dynamic collective of developers committed to building high-quality, open-source Laravel applications including CMS platforms, POS systems, and business management software.";
-const SITE_IMAGE = "https://koamishin.org/og-image.png";
+const SITE_IMAGE = "https://koamishin.com/og-image.png";
 
 const MainLayout = () => {
   return (

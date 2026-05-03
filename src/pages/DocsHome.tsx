@@ -108,17 +108,17 @@ export function DocsHome() {
                 <title>Documentation - Koamishin.org</title>
                 <meta name="description" content="Browse documentation for Koamishin open source projects including CMS, POS, and business systems built with Laravel." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://koamishin.org/docs" />
+                <meta property="og:url" content="https://koamishin.com/docs" />
                 <meta property="og:title" content="Documentation - Koamishin.org" />
                 <meta property="og:description" content="Browse documentation for Koamishin open source projects including CMS, POS, and business systems built with Laravel." />
-                <meta property="og:image" content="https://koamishin.org/og-image.png" />
+                <meta property="og:image" content="https://koamishin.com/og-image.png" />
                 <meta property="og:site_name" content="Koamishin.org" />
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:url" content="https://koamishin.org/docs" />
+                <meta name="twitter:url" content="https://koamishin.com/docs" />
                 <meta name="twitter:title" content="Documentation - Koamishin.org" />
                 <meta name="twitter:description" content="Browse documentation for Koamishin open source projects including CMS, POS, and business systems built with Laravel." />
-                <meta name="twitter:image" content="https://koamishin.org/og-image.png" />
-                <link rel="canonical" href="https://koamishin.org/docs" />
+                <meta name="twitter:image" content="https://koamishin.com/og-image.png" />
+                <link rel="canonical" href="https://koamishin.com/docs" />
             </Helmet>
 
             <div className="min-h-screen bg-background">

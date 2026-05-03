@@ -142,7 +142,7 @@ const Team: React.FC = () => {
           content="Meet the core team behind Koamishin - passionate developers building high-quality open source Laravel applications."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://koamishin.org/team" />
+        <meta property="og:url" content="https://koamishin.com/team" />
         <meta property="og:title" content="Our Team - Koamishin.org" />
         <meta
           property="og:description"
@@ -150,11 +150,11 @@ const Team: React.FC = () => {
         />
         <meta
           property="og:image"
-          content="https://koamishin.org/og-image.png"
+          content="https://koamishin.com/og-image.png"
         />
         <meta property="og:site_name" content="Koamishin.org" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://koamishin.org/team" />
+        <meta name="twitter:url" content="https://koamishin.com/team" />
         <meta name="twitter:title" content="Our Team - Koamishin.org" />
         <meta
           name="twitter:description"
@@ -162,9 +162,9 @@ const Team: React.FC = () => {
         />
         <meta
           name="twitter:image"
-          content="https://koamishin.org/og-image.png"
+          content="https://koamishin.com/og-image.png"
         />
-        <link rel="canonical" href="https://koamishin.org/team" />
+        <link rel="canonical" href="https://koamishin.com/team" />
       </Helmet>
 
       <div

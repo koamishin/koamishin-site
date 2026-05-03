@@ -9,7 +9,7 @@ const PageFooter: React.FC = () => {
       {/* Subtle border */}
       <div className="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-5">
         <p className="font-sans text-sm text-muted-foreground text-center sm:text-left">
-          &copy; {new Date().getFullYear()} Koamishin.org - Open Source Laravel
+          &copy; {new Date().getFullYear()} Koamishin.com - Open Source Laravel
           Projects.
         </p>
         {/* Use a simple link style instead of a button for minimalism */}
