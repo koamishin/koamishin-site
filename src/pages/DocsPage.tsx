@@ -207,7 +207,7 @@ export function DocsPage() {
                 <meta property="og:title" content={`${pageTitle} - ${projectData.name} | Koamishin Docs`} />
                 <meta property="og:description" content={`${pageTitle} documentation for ${projectData.name}`} />
                 <meta property="og:image" content="https://koamishin.com/og-image.png" />
-                <meta property="og:site_name" content="Koamishin.org" />
+                <meta property="og:site_name" content="Koamishin.com" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:url" content={`https://koamishin.com/docs/${projectSlug}/${versionSlug}/${pagePath}`} />
                 <meta name="twitter:title" content={`${pageTitle} - ${projectData.name} | Koamishin Docs`} />

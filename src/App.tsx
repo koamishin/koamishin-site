@@ -12,7 +12,7 @@ import { Helmet } from "react-helmet-async";
 import { useEffect } from "react";
 
 const SITE_URL = "https://koamishin.com";
-const SITE_TITLE = "Koamishin.org - Open Source Laravel Solutions";
+const SITE_TITLE = "Koamishin.com - Open Source Laravel Solutions";
 const SITE_DESCRIPTION =
   "Koamishin is a dynamic collective of developers committed to building high-quality, open-source Laravel applications including CMS platforms, POS systems, and business management software.";
 const SITE_IMAGE = "https://koamishin.com/og-image.png";
@@ -61,7 +61,7 @@ function HomePage() {
         <meta property="og:title" content={SITE_TITLE} />
         <meta property="og:description" content={SITE_DESCRIPTION} />
         <meta property="og:image" content={SITE_IMAGE} />
-        <meta property="og:site_name" content="Koamishin.org" />
+        <meta property="og:site_name" content="Koamishin.com" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={SITE_URL} />
         <meta name="twitter:title" content={SITE_TITLE} />
