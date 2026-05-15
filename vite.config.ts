@@ -24,6 +24,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 700,
     rollupOptions: {
       output: {
+        hashCharacters: "hex",
         manualChunks: {
           "gsap-vendor": ["gsap"],
           "icons-vendor": ["lucide-react"],
