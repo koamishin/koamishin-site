@@ -5,11 +5,11 @@ import {
   Github,
   Twitter,
   Linkedin,
-  Globe,
   MapPin,
   Database,
   Users,
   Building2,
+  ExternalLink,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Helmet } from "react-helmet-async";
@@ -39,6 +39,15 @@ interface Artisan {
   };
 }
 
+const getPortfolioLabel = (url: string) => {
+  try {
+    const host = new URL(url).hostname;
+    return host.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+};
+
 const artisans: Artisan[] = [
   {
     id: "001",
@@ -64,7 +73,7 @@ const artisans: Artisan[] = [
     username: "SorenOutis",
     roles: [
       "Full Stack Developer",
-      "Graphic Designer ",
+      "Graphic Designer",
       "Network Administrator",
     ],
     bio: "Crafting code with precision. Dedicated to open source excellence and community growth.",
@@ -93,7 +102,7 @@ const artisans: Artisan[] = [
     ],
     bio: "Just a Chill Writer. Bringing creativity, clarity, and chill vibes to the codebase.",
     image: "https://avatars.githubusercontent.com/u/195420898?v=4&s=1024",
-    location: "Koamishin Org",
+    location: "Koamishin",
     company: "Koamishin",
     stats: {
       repos: 6,
@@ -208,6 +217,18 @@ const Team: React.FC = () => {
                     </div>
                   </div>
 
+                  {artisan.socials.website && (
+                    <a
+                      href={artisan.socials.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="absolute top-6 right-6 z-20 flex items-center gap-1.5 bg-primary/90 hover:bg-primary text-primary-foreground backdrop-blur-md px-3 py-1.5 rounded-md font-mono text-xs font-semibold transition-colors shadow-lg shadow-primary/25"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      Portfolio
+                    </a>
+                  )}
+
                   <div className="relative aspect-[4/5] overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10" />
                     <img
@@ -265,6 +286,20 @@ const Team: React.FC = () => {
                       </p>
                     </div>
 
+                    {artisan.socials.website && (
+                      <a
+                        href={artisan.socials.website}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 mb-6 px-4 py-2.5 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group/link"
+                      >
+                        <ExternalLink className="h-4 w-4 text-primary shrink-0" />
+                        <span className="font-mono text-sm text-primary truncate">
+                          {getPortfolioLabel(artisan.socials.website)}
+                        </span>
+                      </a>
+                    )}
+
                     <div className="flex flex-wrap gap-2 mb-8">
                       {artisan.tech.map((tech) => (
                         <Badge
@@ -312,16 +347,6 @@ const Team: React.FC = () => {
                             className="text-muted-foreground hover:text-foreground transition-colors"
                           >
                             <Linkedin className="h-4 w-4" />
-                          </a>
-                        )}
-                        {artisan.socials.website && (
-                          <a
-                            href={artisan.socials.website}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-muted-foreground hover:text-foreground transition-colors"
-                          >
-                            <Globe className="h-4 w-4" />
                           </a>
                         )}
                       </div>
