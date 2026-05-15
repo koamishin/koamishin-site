@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -14,17 +15,43 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
-  { name: "About", href: "#about" },
-  { name: "Projects", href: "#projects" },
-  { name: "Philosophy", href: "#philosophy" },
+  { name: "About", href: "/#about" },
+  { name: "Projects", href: "/#projects" },
+  { name: "Philosophy", href: "/#philosophy" },
   { name: "Team", href: "/team" },
   { name: "Docs", href: "/docs" },
 ];
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeLink, setActiveLink] = useState<string>("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const hashIndex = href.indexOf("#");
+    const hash = hashIndex !== -1 ? href.substring(hashIndex + 1) : null;
+    const path = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
+
+    if (hash) {
+      if (location.pathname !== path) {
+        navigate(path);
+        setTimeout(() => {
+          const el = document.getElementById(hash);
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate(path);
+      window.scrollTo(0, 0);
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -93,9 +120,10 @@ const Header: React.FC = () => {
             <a
               key={item.name}
               href={item.href}
+              onClick={(e) => handleNavClick(e, item.href)}
               className={cn(
                 "group relative text-sm font-medium tracking-wide transition-colors hover:text-primary",
-                activeLink === (item.href.startsWith("#") ? item.href.substring(1) : item.href)
+                activeLink === (item.href.includes("#") ? item.href.split("#")[1] : item.href)
                   ? "text-primary"
                   : "text-muted-foreground"
               )}
@@ -141,7 +169,7 @@ const Header: React.FC = () => {
                     <a
                       key={item.name}
                       href={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={(e) => handleNavClick(e, item.href)}
                       className="group flex items-center justify-between border-b border-border/50 pb-4 text-3xl font-light tracking-tight transition-colors hover:text-primary"
                     >
                       <span className="font-serif italic">{item.name}</span>
