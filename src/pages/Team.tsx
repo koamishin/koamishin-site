@@ -78,6 +78,7 @@ const artisans: Artisan[] = [
     tech: ["Laravel", "Vue", "System Arch"],
     socials: {
       github: "https://github.com/SorenOutis",
+      website: "https://ob.koamishin.com",
     },
   },
   {
@@ -102,6 +103,7 @@ const artisans: Artisan[] = [
     tech: ["PHP", "TypeScript", "Writing"],
     socials: {
       github: "https://github.com/Rui-Zen",
+      website: "https://rui.koamishin.com",
     },
   },
 ];
@@ -136,14 +138,14 @@ const Team: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Our Team - Koamishin.org</title>
+        <title>Our Team - Koamishin.com</title>
         <meta
           name="description"
           content="Meet the core team behind Koamishin - passionate developers building high-quality open source Laravel applications."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://koamishin.com/team" />
-        <meta property="og:title" content="Our Team - Koamishin.org" />
+        <meta property="og:title" content="Our Team - Koamishin.com" />
         <meta
           property="og:description"
           content="Meet the core team behind Koamishin - passionate developers building high-quality open source Laravel applications."
@@ -152,10 +154,10 @@ const Team: React.FC = () => {
           property="og:image"
           content="https://koamishin.com/og-image.png"
         />
-        <meta property="og:site_name" content="Koamishin.org" />
+        <meta property="og:site_name" content="Koamishin.com" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://koamishin.com/team" />
-        <meta name="twitter:title" content="Our Team - Koamishin.org" />
+        <meta name="twitter:title" content="Our Team - Koamishin.com" />
         <meta
           name="twitter:description"
           content="Meet the core team behind Koamishin - passionate developers building high-quality open source Laravel applications."
@@ -262,6 +264,23 @@ const Team: React.FC = () => {
                         {artisan.bio}
                       </p>
                     </div>
+
+                    {artisan.socials.website && (
+                      <div className="mb-6 rounded-lg border border-primary/30 bg-primary/5 p-4">
+                        <div className="mb-2 text-[10px] font-mono uppercase tracking-[0.18em] text-primary/80">
+                          Portfolio
+                        </div>
+                        <a
+                          href={artisan.socials.website}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                        >
+                          <Globe className="h-4 w-4" />
+                          Visit {artisan.name}'s portfolio
+                        </a>
+                      </div>
+                    )}
 
                     <div className="flex flex-wrap gap-2 mb-8">
                       {artisan.tech.map((tech) => (
