@@ -21,15 +21,5 @@ export default defineConfig({
   },
   build: {
     outDir: "dist", // This is the default
-    chunkSizeWarningLimit: 700,
-    rollupOptions: {
-      output: {
-        hashCharacters: "hex",
-        manualChunks: {
-          "gsap-vendor": ["gsap"],
-          "icons-vendor": ["lucide-react"],
-        },
-      },
-    },
   },
 });

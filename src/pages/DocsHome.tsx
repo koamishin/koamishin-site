@@ -105,17 +105,17 @@ export function DocsHome() {
     return (
         <>
             <Helmet>
-                <title>Documentation - Koamishin.com</title>
+                <title>Documentation - Koamishin.org</title>
                 <meta name="description" content="Browse documentation for Koamishin open source projects including CMS, POS, and business systems built with Laravel." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://koamishin.com/docs" />
-                <meta property="og:title" content="Documentation - Koamishin.com" />
+                <meta property="og:title" content="Documentation - Koamishin.org" />
                 <meta property="og:description" content="Browse documentation for Koamishin open source projects including CMS, POS, and business systems built with Laravel." />
                 <meta property="og:image" content="https://koamishin.com/og-image.png" />
-                <meta property="og:site_name" content="Koamishin.com" />
+                <meta property="og:site_name" content="Koamishin.org" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:url" content="https://koamishin.com/docs" />
-                <meta name="twitter:title" content="Documentation - Koamishin.com" />
+                <meta name="twitter:title" content="Documentation - Koamishin.org" />
                 <meta name="twitter:description" content="Browse documentation for Koamishin open source projects including CMS, POS, and business systems built with Laravel." />
                 <meta name="twitter:image" content="https://koamishin.com/og-image.png" />
                 <link rel="canonical" href="https://koamishin.com/docs" />
