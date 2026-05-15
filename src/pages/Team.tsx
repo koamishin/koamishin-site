@@ -78,6 +78,7 @@ const artisans: Artisan[] = [
     tech: ["Laravel", "Vue", "System Arch"],
     socials: {
       github: "https://github.com/SorenOutis",
+      website: "https://ob.koamishin.com",
     },
   },
   {
@@ -102,6 +103,7 @@ const artisans: Artisan[] = [
     tech: ["PHP", "TypeScript", "Writing"],
     socials: {
       github: "https://github.com/Rui-Zen",
+      website: "https://rui.koamishin.org",
     },
   },
 ];
