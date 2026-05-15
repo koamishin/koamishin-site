@@ -59,7 +59,7 @@ export function DocLayout({ children }: DocLayoutProps) {
                     <div className="flex items-center gap-4">
                         <Link to="/" className="flex items-center gap-2">
                             <span className="font-serif text-xl font-bold text-foreground">
-                                Koamishin<span className="text-primary">.</span><span className="font-mono">org</span>
+                                Koamishin<span className="text-primary">.</span><span className="font-mono">com</span>
                             </span>
                         </Link>
 
