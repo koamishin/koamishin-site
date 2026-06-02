@@ -115,6 +115,25 @@ const artisans: Artisan[] = [
       website: "https://rui.koamishin.com",
     },
   },
+  {
+    id: "004",
+    name: "Angelika",
+    username: "elyashzyl",
+    roles: ["Developer", "Koamishin Contributor"],
+    bio: "Contributing thoughtful work to the Koamishin ecosystem and helping the team build with care.",
+    image: "https://avatars.githubusercontent.com/elyashzyl?s=1024",
+    location: "Remote",
+    stats: {
+      repos: 0,
+      followers: 0,
+      contributions: "Active",
+    },
+    tech: ["React", "TypeScript", "Laravel"],
+    socials: {
+      github: "https://github.com/elyashzyl",
+      website: "https://ely.koamishin.com/",
+    },
+  },
 ];
 
 const Team: React.FC = () => {
