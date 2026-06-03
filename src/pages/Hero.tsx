@@ -430,9 +430,7 @@ const Hero: React.FC = () => {
           trigger: containerRef.current,
           start: "top top",
           end: "bottom top",
-          scrub: true,
-          pin: true, // Pins the section so the scale down exit plays inside a fixed frame first
-          pinSpacing: false
+          scrub: true
         }
       });
 

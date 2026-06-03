@@ -11,6 +11,10 @@ import Team from "./pages/Team";
 import { Helmet } from "react-helmet-async";
 import { useEffect } from "react";
 import { useLenis } from "./hooks/use-lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const SITE_URL = "https://koamishin.com";
 const SITE_TITLE = "Koamishin.com - Open Source Laravel Solutions";
@@ -19,6 +23,15 @@ const SITE_DESCRIPTION =
 const SITE_IMAGE = "https://koamishin.com/og-image.png";
 
 const MainLayout = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const id = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 120);
+    return () => clearTimeout(id);
+  }, [location.pathname]);
+
   return (
     <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
       <Header />
@@ -35,14 +48,21 @@ function HomePage() {
 
   useEffect(() => {
     if (location.hash) {
-      const element = document.getElementById(location.hash.substring(1));
-      if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-      }
+      const target = "#" + location.hash.substring(1);
+      setTimeout(() => {
+        if ((window as any).lenis) {
+          (window as any).lenis.scrollTo(target);
+        } else {
+          const element = document.getElementById(location.hash.substring(1));
+          if (element) element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 120);
     } else {
-      window.scrollTo(0, 0);
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(0);
+      } else {
+        window.scrollTo(0, 0);
+      }
     }
   }, [location]);
 
