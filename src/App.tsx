@@ -10,6 +10,7 @@ import DocsPage from "./pages/DocsPage";
 import Team from "./pages/Team";
 import { Helmet } from "react-helmet-async";
 import { useEffect } from "react";
+import { useLenis } from "./hooks/use-lenis";
 
 const SITE_URL = "https://koamishin.com";
 const SITE_TITLE = "Koamishin.com - Open Source Laravel Solutions";
@@ -85,6 +86,8 @@ function HomePage() {
 }
 
 function App() {
+  useLenis();
+
   return (
     <Routes>
       <Route element={<MainLayout />}>

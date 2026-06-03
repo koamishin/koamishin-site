@@ -39,16 +39,28 @@ const Header: React.FC = () => {
       if (location.pathname !== path) {
         navigate(path);
         setTimeout(() => {
+          if ((window as any).lenis) {
+            (window as any).lenis.scrollTo("#" + hash);
+          } else {
+            const el = document.getElementById(hash);
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 120);
+      } else {
+        if ((window as any).lenis) {
+          (window as any).lenis.scrollTo("#" + hash);
+        } else {
           const el = document.getElementById(hash);
           if (el) el.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-      } else {
-        const el = document.getElementById(hash);
-        if (el) el.scrollIntoView({ behavior: "smooth" });
+        }
       }
     } else {
       navigate(path);
-      window.scrollTo(0, 0);
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(0);
+      } else {
+        window.scrollTo(0, 0);
+      }
     }
     setIsMobileMenuOpen(false);
   };
