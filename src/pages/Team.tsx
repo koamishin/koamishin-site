@@ -480,15 +480,15 @@ const Team: React.FC = () => {
               <div className="relative z-10 grid h-full min-h-0 gap-0 xl:grid-cols-[minmax(280px,0.75fr)_1.25fr]">
                 <div
                   ref={portraitRef}
-                  className="relative min-h-[300px] overflow-hidden border-b border-border bg-muted/35 xl:min-h-0 xl:border-b-0 xl:border-r"
+                  className="group/portrait relative min-h-[300px] overflow-hidden border-b border-border bg-muted/35 xl:min-h-0 xl:border-b-0 xl:border-r"
                 >
                   <img
                     key={activeArtisan.image}
                     src={activeArtisan.image}
                     alt={activeArtisan.name}
-                    className="h-full min-h-[300px] w-full object-cover grayscale transition duration-700 hover:grayscale-0 xl:min-h-0"
+                    className="h-full min-h-[300px] w-full object-cover grayscale transition duration-700 group-hover/portrait:grayscale-0 xl:min-h-0"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/15 to-transparent" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/15 to-transparent" />
                   <div className="profile-swap absolute bottom-5 left-5 right-5">
                     <div className="mb-3 flex flex-wrap items-center gap-2">
                       <Badge className="rounded-md bg-primary text-primary-foreground">
