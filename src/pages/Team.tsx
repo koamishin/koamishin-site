@@ -1,35 +1,30 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
   ArrowUpRight,
-  BriefcaseBusiness,
   Building2,
-  Code2,
   Database,
   ExternalLink,
   Github,
-  Linkedin,
   MapPin,
   ShieldCheck,
-  Twitter,
   Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet-async";
+import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
-
-type LenisScroller = {
-  scrollTo: (
-    target: HTMLElement,
-    options?: { offset?: number; duration?: number }
-  ) => void;
-};
-
-type WindowWithLenis = { lenis?: LenisScroller };
 
 interface Artisan {
   id: string;
@@ -53,15 +48,6 @@ interface Artisan {
     website?: string;
   };
 }
-
-const getPortfolioLabel = (url: string) => {
-  try {
-    const host = new URL(url).hostname;
-    return host.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-};
 
 const artisans: Artisan[] = [
   {
@@ -153,105 +139,146 @@ const artisans: Artisan[] = [
 
 const Team: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const featureRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
   const rosterRef = useRef<HTMLDivElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const thumbnailRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const activeIndexRef = useRef(0);
+  const isAnimatingRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const activeArtisan = artisans[activeIndex];
-  const totalRepos = useMemo(
-    () => artisans.reduce((total, artisan) => total + artisan.stats.repos, 0),
+  const totals = useMemo(
+    () => ({
+      members: artisans.length,
+      repos: artisans.reduce((total, artisan) => total + artisan.stats.repos, 0),
+      skills: Array.from(new Set(artisans.flatMap((artisan) => artisan.tech)))
+        .length,
+    }),
     []
   );
-  const coreDisciplines = useMemo(
-    () => Array.from(new Set(artisans.flatMap((artisan) => artisan.tech))).length,
-    []
-  );
 
-  const scrollToRoster = () => {
-    const target = rosterRef.current;
-    if (!target) return;
+  const selectProfile = useCallback((nextIndex: number) => {
+    if (nextIndex === activeIndexRef.current || isAnimatingRef.current) return;
 
-    const lenis = (window as unknown as WindowWithLenis).lenis;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    const source = thumbnailRefs.current[nextIndex];
+    const target = portraitRef.current;
 
-    if (lenis) {
-      lenis.scrollTo(target, { offset: -96, duration: 1.2 });
+    if (reducedMotion || !source || !target) {
+      activeIndexRef.current = nextIndex;
+      setActiveIndex(nextIndex);
       return;
     }
 
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    const sourceRect = source.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const sourceImage = source.querySelector("img");
+    const clone = document.createElement("img");
+
+    isAnimatingRef.current = true;
+    clone.src = artisans[nextIndex].image;
+    clone.alt = artisans[nextIndex].name;
+    clone.setAttribute("aria-hidden", "true");
+    clone.style.position = "fixed";
+    clone.style.left = `${sourceRect.left}px`;
+    clone.style.top = `${sourceRect.top}px`;
+    clone.style.width = `${sourceRect.width}px`;
+    clone.style.height = `${sourceRect.height}px`;
+    clone.style.objectFit = "cover";
+    clone.style.borderRadius = getComputedStyle(source).borderRadius;
+    clone.style.filter = sourceImage
+      ? getComputedStyle(sourceImage).filter
+      : "grayscale(1)";
+    clone.style.pointerEvents = "none";
+    clone.style.zIndex = "120";
+    clone.style.boxShadow = "0 18px 60px hsl(225 28% 14% / 0.18)";
+
+    document.body.appendChild(clone);
+
+    gsap
+      .timeline({
+        defaults: { ease: "power3.inOut" },
+        onComplete: () => {
+          clone.remove();
+          isAnimatingRef.current = false;
+        },
+      })
+      .to(clone, {
+        left: targetRect.left,
+        top: targetRect.top,
+        width: targetRect.width,
+        height: targetRect.height,
+        borderRadius: getComputedStyle(target).borderRadius,
+        duration: 0.65,
+      })
+      .to(
+        clone,
+        {
+          filter: "grayscale(0)",
+          duration: 0.22,
+          ease: "power2.out",
+        },
+        0.34
+      )
+      .call(
+        () => {
+          activeIndexRef.current = nextIndex;
+          setActiveIndex(nextIndex);
+        },
+        undefined,
+        0.42
+      )
+      .to(
+        clone,
+        {
+          opacity: 0,
+          scale: 1.015,
+          duration: 0.2,
+          ease: "power2.out",
+        },
+        0.52
+      );
+  }, []);
+
+  const goToProfile = (direction: "next" | "previous") => {
+    const current = activeIndexRef.current;
+    const nextIndex =
+      direction === "next"
+        ? (current + 1) % artisans.length
+        : (current - 1 + artisans.length) % artisans.length;
+
+    selectProfile(nextIndex);
   };
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      selectProfile((activeIndexRef.current + 1) % artisans.length);
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [selectProfile]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        headerRef.current,
-        { y: 48, opacity: 0, filter: "blur(10px)" },
+        ".team-reveal",
+        { y: 28, opacity: 0, filter: "blur(8px)" },
         {
           y: 0,
           opacity: 1,
           filter: "blur(0px)",
-          duration: 1.1,
+          duration: 0.8,
           ease: "power3.out",
-        }
-      );
-
-      gsap.fromTo(
-        featureRef.current,
-        { y: 72, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power3.out",
-          delay: 0.15,
-        }
-      );
-
-      gsap.fromTo(
-        ".team-metric",
-        { y: 24, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
           stagger: 0.08,
-          duration: 0.7,
-          ease: "power2.out",
-          delay: 0.25,
-        }
-      );
-
-      gsap.fromTo(
-        ".artisan-card",
-        { y: 80, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          stagger: 0.12,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: rosterRef.current,
-            start: "top 82%",
-          },
         }
       );
 
       gsap.to(backgroundRef.current, {
-        yPercent: 16,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-
-      gsap.to(".parallax-slow", {
-        yPercent: -12,
+        yPercent: 10,
         ease: "none",
         scrollTrigger: {
           trigger: containerRef.current,
@@ -261,8 +288,8 @@ const Team: React.FC = () => {
         },
       });
 
-      gsap.to(".parallax-fast", {
-        yPercent: 18,
+      gsap.to(".team-parallax-soft", {
+        yPercent: -6,
         ease: "none",
         scrollTrigger: {
           trigger: containerRef.current,
@@ -277,53 +304,33 @@ const Team: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!featureRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".profile-swap",
+        { y: 18, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.38,
+          ease: "power2.out",
+          stagger: 0.04,
+        }
+      );
+    }, detailRef);
 
-    const card = featureRef.current;
-    const rotateX = gsap.quickTo(card, "rotationX", {
-      duration: 0.45,
-      ease: "power3.out",
-    });
-    const rotateY = gsap.quickTo(card, "rotationY", {
-      duration: 0.45,
-      ease: "power3.out",
-    });
-
-    const handleMove = (event: MouseEvent) => {
-      const rect = card.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - 0.5;
-      const y = (event.clientY - rect.top) / rect.height - 0.5;
-
-      rotateX(y * -5);
-      rotateY(x * 5);
-    };
-
-    const handleLeave = () => {
-      rotateX(0);
-      rotateY(0);
-    };
-
-    card.addEventListener("mousemove", handleMove);
-    card.addEventListener("mouseleave", handleLeave);
-
-    return () => {
-      card.removeEventListener("mousemove", handleMove);
-      card.removeEventListener("mouseleave", handleLeave);
-    };
-  }, []);
+    return () => ctx.revert();
+  }, [activeIndex]);
 
   useEffect(() => {
-    gsap.fromTo(
-      ".active-profile-detail",
-      { y: 12, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.35,
-        ease: "power3.out",
-        stagger: 0.04,
-      }
+    const activeButton = rosterRef.current?.querySelector<HTMLButtonElement>(
+      `[data-profile-index="${activeIndex}"]`
     );
+
+    activeButton?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
   }, [activeIndex]);
 
   return (
@@ -362,95 +369,193 @@ const Team: React.FC = () => {
 
       <div
         ref={containerRef}
-        className="relative min-h-screen overflow-hidden bg-background pt-32 pb-28"
+        className="relative min-h-screen overflow-hidden bg-background pt-6 pb-10 lg:pt-8"
       >
         <div
           ref={backgroundRef}
-          className="pointer-events-none absolute inset-x-0 top-0 h-[760px] opacity-70"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[760px] opacity-80"
         >
-          <div className="absolute left-1/2 top-8 h-[560px] w-[560px] -translate-x-1/2 rounded-full border border-primary/10" />
-          <div className="absolute left-[8%] top-40 h-48 w-48 rounded-full border border-border/70 bg-card/30 blur-sm" />
-          <div className="absolute right-[7%] top-24 h-64 w-64 rounded-full bg-primary/[0.045] blur-3xl" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:72px_72px] opacity-[0.13]" />
+          <div className="absolute left-1/2 top-8 h-[540px] w-[540px] -translate-x-1/2 rounded-full border border-primary/10" />
+          <div className="absolute left-[7%] top-44 h-40 w-40 rounded-lg border border-border/70 bg-card/25 blur-sm" />
+          <div className="absolute right-[8%] top-28 h-64 w-64 rounded-full bg-primary/[0.04] blur-3xl" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:72px_72px] opacity-[0.12]" />
         </div>
 
-        <div className="container relative z-10 mx-auto px-6 md:px-12">
-          <header
-            ref={headerRef}
-            className="mx-auto mb-16 max-w-5xl text-center"
-          >
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1">
-              <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-              <span className="font-mono text-xs uppercase tracking-widest text-primary">
-                Koamishin Team
-              </span>
-            </div>
-            <h1 className="mb-8 font-serif text-5xl font-bold leading-[1.02] tracking-tight text-foreground md:text-7xl lg:text-8xl">
+        <div className="container relative z-10 mx-auto px-5 md:px-8 lg:px-12">
+          <header className="team-reveal mx-auto mb-5 max-w-5xl text-center lg:mb-6">
+            <h1 className="mb-3 font-serif text-4xl font-bold leading-[1.02] text-foreground md:text-5xl lg:text-5xl xl:text-6xl">
               The people behind the systems.
             </h1>
-            <p className="mx-auto max-w-3xl text-base font-light leading-relaxed text-muted-foreground md:text-xl">
+            <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground">
               A compact engineering collective shaped by product thinking, backend discipline, interface craft, and open-source delivery.
             </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button
-                onClick={scrollToRoster}
-                className="h-11 rounded-md px-5 text-xs uppercase tracking-widest"
-              >
-                <ArrowDown className="mr-2 h-4 w-4" />
-                View Roster
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="h-11 rounded-md px-5 text-xs uppercase tracking-widest"
-              >
-                <a href="https://github.com/Koamishin" target="_blank" rel="noreferrer">
-                  GitHub Network
-                  <ArrowUpRight className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-            </div>
           </header>
 
-          <section className="mb-24 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch">
+          <section className="team-reveal team-parallax-soft grid gap-4 lg:h-[calc(100vh-240px)] lg:min-h-[500px] lg:grid-cols-[320px_minmax(0,1fr)] lg:items-stretch xl:grid-cols-[350px_minmax(0,1fr)]">
+            <aside className="rounded-lg border border-border bg-card/65 p-3 shadow-xl shadow-primary/5 backdrop-blur-md lg:h-full lg:min-h-0">
+              <div className="mb-2.5 flex items-end justify-between gap-4">
+                <div>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
+                    Roster
+                  </span>
+                  <h2 className="font-serif text-lg font-bold text-foreground">
+                    Select Profile
+                  </h2>
+                </div>
+                <div className="rounded-md border border-border bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {activeIndex + 1}/{artisans.length}
+                </div>
+              </div>
+
+              <div
+                ref={rosterRef}
+                className="grid grid-cols-[repeat(4,minmax(220px,1fr))] gap-3 overflow-x-auto pb-2 lg:h-[calc(100%-48px)] lg:grid-cols-1 lg:grid-rows-4 lg:overflow-visible lg:pb-0"
+              >
+                {artisans.map((artisan, index) => {
+                  const isActive = activeIndex === index;
+
+                  return (
+                    <button
+                      key={artisan.id}
+                      type="button"
+                      data-profile-index={index}
+                      onClick={() => selectProfile(index)}
+                      className={cn(
+                        "group grid min-w-[220px] grid-cols-[52px_1fr] gap-3 rounded-md border p-2 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background lg:min-w-0 lg:content-center",
+                        isActive
+                          ? "border-primary/55 bg-primary/7 shadow-md shadow-primary/10"
+                          : "border-border bg-background/45 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-background/75"
+                      )}
+                    >
+                      <div
+                        ref={(el) => {
+                          thumbnailRefs.current[index] = el;
+                        }}
+                        className="relative aspect-square overflow-hidden rounded-md border border-border bg-muted"
+                      >
+                        <img
+                          src={artisan.image}
+                          alt={artisan.name}
+                          className="h-full w-full object-cover grayscale transition duration-500 group-hover:grayscale-0"
+                        />
+                      </div>
+
+                      <div className="min-w-0 self-center">
+                        <div className="mb-1 flex items-center gap-2">
+                          <span className="truncate font-serif text-base font-bold leading-tight text-foreground">
+                            {artisan.name}
+                          </span>
+                          <span
+                            className={cn(
+                              "h-1.5 w-1.5 shrink-0 rounded-full",
+                              isActive ? "bg-primary" : "bg-muted-foreground/30"
+                            )}
+                          />
+                        </div>
+                        <p className="mb-1 truncate font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                          @{artisan.username}
+                        </p>
+                        <p className="line-clamp-1 text-xs leading-relaxed text-muted-foreground lg:line-clamp-2">
+                          {artisan.roles.join(" / ")}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          <Badge
+                            variant="outline"
+                            className="rounded-md border-primary/20 bg-primary/5 px-2 py-0 text-[9px] text-primary"
+                          >
+                            {artisan.stats.contributions}
+                          </Badge>
+                          {artisan.company && (
+                            <Badge
+                              variant="secondary"
+                              className="rounded-md px-2 py-0 text-[9px]"
+                            >
+                              {artisan.company}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </aside>
+
             <div
-              ref={featureRef}
-              className="parallax-slow relative overflow-hidden rounded-lg border border-border bg-card/70 p-6 shadow-xl shadow-primary/5 backdrop-blur-md md:p-8 lg:p-10"
-              style={{ transformStyle: "preserve-3d" }}
+              ref={detailRef}
+              className="relative overflow-hidden rounded-lg border border-border bg-card/70 shadow-2xl shadow-primary/5 backdrop-blur-md lg:h-full lg:min-h-0"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-transparent to-secondary/20" />
-              <div className="relative z-10 grid gap-8 md:grid-cols-[220px_1fr] md:items-center">
-                <div className="relative mx-auto aspect-[4/5] w-full max-w-[220px] overflow-hidden rounded-md border border-border bg-muted">
+              <div className="relative z-10 grid h-full min-h-0 gap-0 xl:grid-cols-[minmax(280px,0.75fr)_1.25fr]">
+                <div
+                  ref={portraitRef}
+                  className="relative min-h-[300px] overflow-hidden border-b border-border bg-muted/35 xl:min-h-0 xl:border-b-0 xl:border-r"
+                >
                   <img
                     key={activeArtisan.image}
                     src={activeArtisan.image}
                     alt={activeArtisan.name}
-                    className="h-full w-full object-cover grayscale transition duration-500 hover:grayscale-0"
+                    className="h-full min-h-[300px] w-full object-cover grayscale transition duration-700 hover:grayscale-0 xl:min-h-0"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-primary">
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/15 to-transparent" />
+                  <div className="profile-swap absolute bottom-5 left-5 right-5">
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      <Badge className="rounded-md bg-primary text-primary-foreground">
+                        ID {activeArtisan.id}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="rounded-md border-white/20 bg-black/35 text-white backdrop-blur-md"
+                      >
+                        {activeArtisan.stats.contributions}
+                      </Badge>
+                    </div>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
                       Active Profile
-                    </span>
+                    </p>
                   </div>
                 </div>
 
-                <div>
-                  <div className="active-profile-detail mb-4 flex flex-wrap items-center gap-3">
-                    <Badge variant="outline" className="rounded-md border-primary/25 bg-primary/5 text-primary">
-                      ID {activeArtisan.id}
-                    </Badge>
-                    <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                      @{activeArtisan.username}
-                    </span>
+                <div className="flex min-h-[500px] flex-col p-5 md:p-6 lg:min-h-0 lg:overflow-y-auto xl:p-6">
+                  <div className="profile-swap mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                        @{activeArtisan.username}
+                      </p>
+                      <h2 className="font-serif text-4xl font-bold leading-none text-foreground md:text-5xl">
+                        {activeArtisan.name}
+                      </h2>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="rounded-md"
+                        aria-label="View previous profile"
+                        onClick={() => goToProfile("previous")}
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="rounded-md"
+                        aria-label="View next profile"
+                        onClick={() => goToProfile("next")}
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <h2 className="active-profile-detail mb-4 font-serif text-4xl font-bold leading-tight text-foreground md:text-5xl">
-                    {activeArtisan.name}
-                  </h2>
-                  <p className="active-profile-detail mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+
+                  <p className="profile-swap mb-4 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
                     {activeArtisan.bio}
                   </p>
-                  <div className="active-profile-detail mb-8 flex flex-wrap gap-2">
+
+                  <div className="profile-swap mb-4 flex flex-wrap gap-2">
                     {activeArtisan.roles.map((role) => (
                       <span
                         key={role}
@@ -460,246 +565,138 @@ const Team: React.FC = () => {
                       </span>
                     ))}
                   </div>
-                  <div className="active-profile-detail grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-md border border-border bg-background/50 p-4">
-                      <Database className="mb-3 h-4 w-4 text-primary" />
-                      <div className="font-serif text-2xl font-bold">{activeArtisan.stats.repos}</div>
+
+                  <div className="profile-swap mb-5 grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-md border border-border bg-background/50 p-3">
+                      <Database className="mb-2 h-4 w-4 text-primary" />
+                      <div className="font-serif text-2xl font-bold">
+                        {activeArtisan.stats.repos}
+                      </div>
                       <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                         Repos
                       </div>
                     </div>
-                    <div className="rounded-md border border-border bg-background/50 p-4">
-                      <Users className="mb-3 h-4 w-4 text-primary" />
-                      <div className="font-serif text-2xl font-bold">{activeArtisan.stats.followers}</div>
+                    <div className="rounded-md border border-border bg-background/50 p-3">
+                      <Users className="mb-2 h-4 w-4 text-primary" />
+                      <div className="font-serif text-2xl font-bold">
+                        {activeArtisan.stats.followers}
+                      </div>
                       <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                         Followers
                       </div>
                     </div>
-                    <div className="rounded-md border border-border bg-background/50 p-4">
-                      <ShieldCheck className="mb-3 h-4 w-4 text-primary" />
-                      <div className="font-serif text-2xl font-bold">{activeArtisan.stats.contributions}</div>
+                    <div className="rounded-md border border-border bg-background/50 p-3">
+                      <ShieldCheck className="mb-2 h-4 w-4 text-primary" />
+                      <div className="font-serif text-2xl font-bold">
+                        {activeArtisan.stats.contributions}
+                      </div>
                       <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                         Status
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
 
-            <aside className="parallax-fast grid gap-4 rounded-lg border border-border bg-muted/35 p-5 backdrop-blur-sm md:grid-cols-3 lg:grid-cols-1">
-              <div className="team-metric rounded-md border border-border bg-card/60 p-5">
-                <BriefcaseBusiness className="mb-5 h-5 w-5 text-primary" />
-                <div className="font-serif text-4xl font-bold">{artisans.length}</div>
-                <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">
-                  Core Members
-                </p>
-              </div>
-              <div className="team-metric rounded-md border border-border bg-card/60 p-5">
-                <Database className="mb-5 h-5 w-5 text-primary" />
-                <div className="font-serif text-4xl font-bold">{totalRepos}</div>
-                <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">
-                  Public Repos
-                </p>
-              </div>
-              <div className="team-metric rounded-md border border-border bg-card/60 p-5">
-                <Code2 className="mb-5 h-5 w-5 text-primary" />
-                <div className="font-serif text-4xl font-bold">{coreDisciplines}</div>
-                <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">
-                  Shared Skills
-                </p>
-              </div>
-            </aside>
-          </section>
-
-          <div ref={rosterRef} className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
-                Interactive Roster
-              </span>
-              <h2 className="mt-3 font-serif text-3xl font-bold text-foreground md:text-5xl">
-                Select a profile
-              </h2>
-            </div>
-            <p className="max-w-lg text-sm leading-relaxed text-muted-foreground">
-              Click a team member to inspect their focus, portfolio, public work, and role in the Koamishin network.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {artisans.map((artisan, index) => (
-              <button
-                key={artisan.id}
-                type="button"
-                onClick={() => setActiveIndex(index)}
-                className="artisan-card group relative h-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                ref={(el) => {
-                  cardsRef.current[index] = el;
-                }}
-              >
-                <div
-                  className={`relative h-full overflow-hidden rounded-lg border bg-card/65 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/5 ${
-                    activeIndex === index
-                      ? "border-primary/60 shadow-xl shadow-primary/10"
-                      : "border-border"
-                  }`}
-                >
-                  <div className="absolute top-6 left-6 z-20">
-                    <div className="rounded-md border border-white/10 bg-black/50 px-3 py-1 font-mono text-xs font-bold text-white/80 backdrop-blur-md">
-                      ID: {artisan.id}
-                    </div>
-                  </div>
-
-                  {artisan.socials.website && (
-                    <a
-                      href={artisan.socials.website}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(event) => event.stopPropagation()}
-                      className="absolute top-6 right-6 z-20 flex items-center gap-1.5 rounded-md bg-primary/90 px-3 py-1.5 font-mono text-xs font-semibold text-primary-foreground shadow-lg shadow-primary/25 backdrop-blur-md transition-colors hover:bg-primary"
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                      Portfolio
-                    </a>
-                  )}
-
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    <div className="absolute inset-0 z-10 bg-gradient-to-t from-background via-transparent to-transparent" />
-                    <img
-                      src={artisan.image}
-                      alt={artisan.name}
-                      className="h-full w-full object-cover grayscale transition-transform duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0"
-                    />
-
-                    <div className="absolute bottom-4 left-4 right-4 z-20 flex translate-y-4 justify-between gap-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <div className="flex items-center gap-1.5 rounded-md border border-white/10 bg-black/60 px-3 py-1.5 text-xs text-white backdrop-blur-md">
-                        <Database className="h-3 w-3 text-primary" />
-                        <span>{artisan.stats.repos} Repos</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 rounded-md border border-white/10 bg-black/60 px-3 py-1.5 text-xs text-white backdrop-blur-md">
-                        <Users className="h-3 w-3 text-primary" />
-                        <span>{artisan.stats.followers} FLW</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="relative p-6 pt-5">
-                    <div className="mb-4 flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="mb-1 font-serif text-2xl font-bold text-foreground transition-colors group-hover:text-primary">
-                          {artisan.name}
-                        </h3>
-                        <p className="font-mono text-xs text-muted-foreground">
-                          @{artisan.username}
-                        </p>
-                      </div>
-                      {artisan.company && (
-                        <div className="flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground">
-                          <Building2 className="h-3 w-3" />
-                          {artisan.company}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mb-6">
-                      <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium text-primary">
-                        {artisan.roles.map((role, idx) => (
-                          <span key={role} className="flex items-center gap-2">
-                            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                            {role}
-                            {idx < artisan.roles.length - 1 && (
-                              <span className="text-muted-foreground/50">/</span>
-                            )}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                        {artisan.bio}
-                      </p>
-                    </div>
-
-                    {artisan.socials.website && (
-                      <a
-                        href={artisan.socials.website}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(event) => event.stopPropagation()}
-                        className="mb-6 flex items-center gap-2 rounded-md border border-primary/30 bg-primary/5 px-4 py-2.5 transition-all hover:border-primary/50 hover:bg-primary/10 group/link"
-                      >
-                        <ExternalLink className="h-4 w-4 shrink-0 text-primary" />
-                        <span className="truncate font-mono text-sm text-primary">
-                          {getPortfolioLabel(artisan.socials.website)}
-                        </span>
-                      </a>
-                    )}
-
-                    <div className="mb-8 flex flex-wrap gap-2">
-                      {artisan.tech.map((tech) => (
+                  <div className="profile-swap mb-5">
+                    <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+                      Core Skills
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {activeArtisan.tech.map((tech) => (
                         <Badge
                           key={tech}
                           variant="secondary"
-                          className="rounded-md bg-secondary/50 text-[10px] hover:bg-secondary"
+                          className="rounded-md bg-secondary/55 text-xs"
                         >
                           {tech}
                         </Badge>
                       ))}
                     </div>
+                  </div>
 
-                    <div className="flex items-center justify-between border-t border-border pt-6">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <MapPin className="h-3 w-3" />
-                        {artisan.location}
-                      </div>
+                  <div className="profile-swap mt-auto grid gap-4 border-t border-border pt-5 lg:grid-cols-[1fr_auto] lg:items-end">
+                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-primary" />
+                        {activeArtisan.location}
+                      </span>
+                      {activeArtisan.company && (
+                        <span className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4 text-primary" />
+                          {activeArtisan.company}
+                        </span>
+                      )}
+                    </div>
 
-                      <div className="flex gap-3">
-                        {artisan.socials.github && (
+                    <div className="flex flex-wrap gap-2">
+                      <Button asChild className="rounded-md">
+                        <a
+                          href={activeArtisan.socials.github}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <Github className="mr-2 h-4 w-4" />
+                          GitHub
+                        </a>
+                      </Button>
+                      {activeArtisan.socials.website && (
+                        <Button asChild variant="outline" className="rounded-md">
                           <a
-                            href={artisan.socials.github}
+                            href={activeArtisan.socials.website}
                             target="_blank"
                             rel="noreferrer"
-                            onClick={(event) => event.stopPropagation()}
-                            className="text-muted-foreground transition-colors hover:text-foreground"
                           >
-                            <Github className="h-4 w-4" />
+                            Portfolio
+                            <ExternalLink className="ml-2 h-4 w-4" />
                           </a>
-                        )}
-                        {artisan.socials.twitter && (
-                          <a
-                            href={artisan.socials.twitter}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(event) => event.stopPropagation()}
-                            className="text-muted-foreground transition-colors hover:text-foreground"
-                          >
-                            <Twitter className="h-4 w-4" />
-                          </a>
-                        )}
-                        {artisan.socials.linkedin && (
-                          <a
-                            href={artisan.socials.linkedin}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(event) => event.stopPropagation()}
-                            className="text-muted-foreground transition-colors hover:text-foreground"
-                          >
-                            <Linkedin className="h-4 w-4" />
-                          </a>
-                        )}
-                      </div>
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
-              </button>
-            ))}
-          </div>
+              </div>
+            </div>
+          </section>
 
-          <div className="mt-24 flex flex-col items-center justify-between gap-6 border-t border-border pt-10 text-muted-foreground md:flex-row">
+          <section className="team-reveal mt-5 grid gap-3 border-t border-border pt-5 md:grid-cols-3">
+            <div className="rounded-md border border-border bg-card/50 p-4">
+              <div className="font-serif text-3xl font-bold text-foreground">
+                {totals.members}
+              </div>
+              <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Core Members
+              </p>
+            </div>
+            <div className="rounded-md border border-border bg-card/50 p-4">
+              <div className="font-serif text-3xl font-bold text-foreground">
+                {totals.repos}
+              </div>
+              <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Public Repos
+              </p>
+            </div>
+            <div className="rounded-md border border-border bg-card/50 p-4">
+              <div className="font-serif text-3xl font-bold text-foreground">
+                {totals.skills}
+              </div>
+              <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Shared Skills
+              </p>
+            </div>
+          </section>
+
+          <div className="mt-10 flex flex-col items-center justify-between gap-4 text-muted-foreground md:flex-row">
             <div className="font-mono text-xs uppercase tracking-widest">
               Koamishin Network // Verified Personnel
             </div>
-            <div className="font-mono text-xs uppercase tracking-widest">
-              Total Strength: {artisans.length}
-            </div>
+            <a
+              href="https://github.com/Koamishin"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest transition-colors hover:text-primary"
+            >
+              GitHub Network
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </div>
