@@ -91,7 +91,7 @@ const Projects: React.FC = () => {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative overflow-hidden bg-background py-32 md:py-48">
+    <section ref={containerRef} className="relative overflow-hidden bg-background/65 py-32 md:py-48">
       <div className="container mx-auto px-6 md:px-12">
         
         <div ref={headerRef} className="mx-auto mb-32 max-w-4xl text-center relative">

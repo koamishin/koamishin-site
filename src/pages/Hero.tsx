@@ -37,16 +37,6 @@ const LaravelLogo: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-const GlowingOrb: React.FC<{ className?: string; color?: string }> = ({ className, color = "primary" }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    gsap.to(ref.current, { scale: 1.2, opacity: 0.6, duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut" });
-  }, []);
-  return (
-    <div ref={ref} className={`absolute rounded-full blur-3xl ${className}`} style={{ background: `radial-gradient(circle, var(--${color}) 0%, transparent 70%)` }} />
-  );
-};
-
 const DataStream: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -546,19 +536,15 @@ const Hero: React.FC = () => {
 
       <section
         ref={containerRef}
-        className="relative min-h-screen w-full bg-background flex flex-col justify-center border-b border-border/40 select-none overflow-hidden"
+        className="relative isolate min-h-screen w-full bg-background/45 flex flex-col justify-center border-b border-border/40 select-none overflow-hidden"
       >
         {/* Background Loom Grid & Morphing Particles */}
-        <div className="absolute inset-0 -z-20 overflow-hidden">
-          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-65" />
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-20 mix-blend-screen pointer-events-none" />
         </div>
 
-        {/* Elegant, balanced backdrop studio lighting with Glowing Orbs */}
-        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-          <GlowingOrb className="w-96 h-96 left-[10%] top-[20%]" color="primary" />
-          <GlowingOrb className="w-80 h-80 right-[15%] bottom-[25%]" color="secondary" />
-          <GlowingOrb className="w-64 h-64 left-[30%] bottom-[10%]" color="primary" />
-
+        {/* Quiet brand geometry above the fluid layer */}
+        <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
           {/* Floating brand icons */}
           <div className="floating-icon absolute left-[5%] top-[15%] opacity-30">
             <JapanesePattern className="h-72 w-72 text-primary rotate-12" />
@@ -579,7 +565,7 @@ const Hero: React.FC = () => {
           <VerticalText text="未来" />
         </div>
 
-        <div ref={overlayRef} className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-background/40 to-background opacity-0 pointer-events-none" />
+        <div ref={overlayRef} className="absolute inset-0 z-[2] bg-gradient-to-b from-transparent via-background/40 to-background opacity-0 pointer-events-none" />
         <DataStream />
 
         {/* Main Container: Rounded Shell enclosing the split module */}

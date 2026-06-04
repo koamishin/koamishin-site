@@ -4,7 +4,7 @@ import { Github } from "lucide-react";
 
 const PageFooter: React.FC = () => {
   return (
-    <footer className="py-10 border-t border-border/20 bg-background">
+    <footer className="py-10 border-t border-border/20 bg-background/75 backdrop-blur-sm">
       {" "}
       {/* Subtle border */}
       <div className="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-5">

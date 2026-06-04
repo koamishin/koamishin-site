@@ -121,7 +121,7 @@ export function DocsHome() {
                 <link rel="canonical" href="https://koamishin.com/docs" />
             </Helmet>
 
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background/65">
                 <Header />
 
                 <main className="container mx-auto px-4 py-16">

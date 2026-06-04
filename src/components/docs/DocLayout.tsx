@@ -29,7 +29,7 @@ export function DocLayout({ children }: DocLayoutProps) {
 
     if (!project || !version) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="min-h-screen bg-background/65 flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-2xl font-bold text-foreground mb-4">Documentation Not Found</h1>
                     <Link to="/docs" className="text-primary hover:underline">
@@ -52,7 +52,7 @@ export function DocLayout({ children }: DocLayoutProps) {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background/65">
             {/* Header */}
             <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-sm">
                 <div className="flex h-16 items-center justify-between px-4 lg:px-8">

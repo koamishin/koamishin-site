@@ -137,7 +137,7 @@ const About: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen w-full flex flex-col justify-center overflow-hidden bg-background py-24 md:py-32 border-b border-border/30 select-none"
+      className="relative min-h-screen w-full flex flex-col justify-center overflow-hidden bg-background/65 py-24 md:py-32 border-b border-border/30 select-none"
     >
       
       {/* ─── Continuous Immersive Geometric Depth Background ─── */}

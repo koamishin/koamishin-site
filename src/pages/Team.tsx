@@ -360,7 +360,7 @@ const Team: React.FC = () => {
 
       <div
         ref={containerRef}
-        className="relative min-h-screen overflow-hidden bg-background pt-6 pb-10 lg:pt-8"
+        className="relative min-h-screen overflow-hidden bg-background/65 pt-6 pb-10 lg:pt-8"
       >
         <div
           ref={backgroundRef}
