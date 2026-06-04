@@ -5,6 +5,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+type LenisInstance = InstanceType<typeof Lenis>;
+type WindowWithLenis = { lenis?: LenisInstance };
+
 export const useLenis = () => {
   useEffect(() => {
     const lenis = new Lenis({
@@ -16,20 +19,22 @@ export const useLenis = () => {
       touchMultiplier: 2,
     });
 
-    (window as any).lenis = lenis;
+    (window as unknown as WindowWithLenis).lenis = lenis;
 
     lenis.on("scroll", ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    const updateLenis = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
+
+    gsap.ticker.add(updateLenis);
 
     gsap.ticker.lagSmoothing(0);
 
     return () => {
       lenis.destroy();
-      (window as any).lenis = undefined;
-      gsap.ticker.remove(lenis.raf as any);
+      (window as unknown as WindowWithLenis).lenis = undefined;
+      gsap.ticker.remove(updateLenis);
     };
   }, []);
 };
