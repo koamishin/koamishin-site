@@ -215,15 +215,6 @@ const Team: React.FC = () => {
         borderRadius: getComputedStyle(target).borderRadius,
         duration: 0.65,
       })
-      .to(
-        clone,
-        {
-          filter: "grayscale(0)",
-          duration: 0.22,
-          ease: "power2.out",
-        },
-        0.34
-      )
       .call(
         () => {
           activeIndexRef.current = nextIndex;
@@ -257,7 +248,7 @@ const Team: React.FC = () => {
   useEffect(() => {
     const interval = window.setInterval(() => {
       selectProfile((activeIndexRef.current + 1) % artisans.length);
-    }, 1000);
+    }, 5000);
 
     return () => window.clearInterval(interval);
   }, [selectProfile]);
