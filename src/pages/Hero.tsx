@@ -390,7 +390,7 @@ const Hero: React.FC = () => {
             Specialized in Laravel backend services paired with interactive React and Vue user interfaces.
           </p>
 
-          <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-24">
             <Button asChild size="lg" className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm tracking-wider uppercase transition-all duration-300 shadow-lg shadow-primary/10">
               <a href="#about" onClick={handleExploreClick} className="flex items-center gap-2">
                 Explore Our Craft
@@ -402,7 +402,7 @@ const Hero: React.FC = () => {
 
         <div
           ref={indicatorRef}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground"
         >
           <span className="font-mono text-xs uppercase tracking-[0.2em]">Scroll</span>
           <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex items-start justify-center pt-2">
