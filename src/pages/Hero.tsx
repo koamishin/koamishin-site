@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight, Sparkles, ChevronDown } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronDown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -37,28 +37,6 @@ const LaravelLogo: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-const DataStream: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const lines = containerRef.current?.querySelectorAll(".data-line");
-      if (lines && lines.length > 0) {
-        gsap.to(lines, { y: "100%", duration: 20, repeat: -1, ease: "none", stagger: { amount: 10, from: "random" } });
-      }
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
-  return (
-    <div ref={containerRef} className="absolute right-0 top-0 h-full w-40 overflow-hidden opacity-10 pointer-events-none hidden lg:block">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div key={i} className="data-line absolute top-[-100%] left-0 w-full text-[9px] font-mono leading-none text-primary whitespace-nowrap" style={{ left: `${i * 15}%` }}>
-          {Array.from({ length: 25 }).map(() => Math.floor(Math.random() * 16).toString(16)).join(" ")}
-        </div>
-      ))}
-    </div>
-  );
-};
-
 /* ─── Laser Grid & Flare Sweep Cinematic Intro Overlay ─── */
 const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -66,9 +44,14 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
   const horizontalLinesRef = useRef<SVGGElement>(null);
   const verticalLinesRef = useRef<SVGGElement>(null);
   const kPathRef = useRef<SVGPathElement>(null);
+  const ringRef = useRef<SVGCircleElement>(null);
   const flareRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const wordmarkRef = useRef<HTMLDivElement>(null);
+  const statusRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const tl = gsap.timeline({
       onComplete: () => {
         if (overlayRef.current) overlayRef.current.style.pointerEvents = "none";
@@ -86,22 +69,71 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
       });
     }
 
+    if (ringRef.current) {
+      const length = ringRef.current.getTotalLength();
+      gsap.set(ringRef.current, {
+        strokeDasharray: length,
+        strokeDashoffset: length,
+      });
+    }
+
+    if (reducedMotion) {
+      gsap.set(containerRef.current, { opacity: 1 });
+      gsap.set(kPathRef.current, { strokeDashoffset: 0, opacity: 1 });
+      gsap.set(ringRef.current, { strokeDashoffset: 0 });
+      gsap.set(progressRef.current, { scaleX: 1 });
+      gsap.set([wordmarkRef.current, statusRef.current], { opacity: 1, y: 0 });
+      tl.to(overlayRef.current, { opacity: 0, delay: 0.35, duration: 0.25 });
+      return () => { tl.kill(); };
+    }
+
+    tl.set(containerRef.current, { clipPath: "inset(0 0 0 0%)" })
+    .fromTo(".intro-frame-line",
+      { scaleX: 0, opacity: 0, transformOrigin: "center center" },
+      { scaleX: 1, opacity: 1, duration: 0.75, ease: "power3.out", stagger: 0.06 }
+    )
+    .fromTo(".intro-corner-mark",
+      { opacity: 0, scale: 0.82 },
+      { opacity: 1, scale: 1, duration: 0.55, ease: "power3.out", stagger: 0.04 },
+      "-=0.5"
+    )
     // 1. Weave Grid Lines: Horizontal lines slide left-to-right, vertical lines top-to-bottom
-    tl.fromTo(horizontalLinesRef.current?.querySelectorAll("line") || [],
+    .fromTo(horizontalLinesRef.current?.querySelectorAll("line") || [],
       { scaleX: 0, transformOrigin: "left center" },
-      { scaleX: 1, duration: 1.0, ease: "power2.inOut", stagger: 0.1 }
+      { scaleX: 1, duration: 0.85, ease: "power2.inOut", stagger: 0.07 },
+      "-=0.35"
     )
     .fromTo(verticalLinesRef.current?.querySelectorAll("line") || [],
       { scaleY: 0, transformOrigin: "center top" },
-      { scaleY: 1, duration: 1.0, ease: "power2.inOut", stagger: 0.1 },
-      "-=0.8"
+      { scaleY: 1, duration: 0.85, ease: "power2.inOut", stagger: 0.07 },
+      "-=0.72"
     )
+    .to(ringRef.current, {
+      strokeDashoffset: 0,
+      duration: 1.15,
+      ease: "power3.inOut"
+    }, "-=0.55")
     // 2. Draw the geometric glowing "K" laser line
     .to(kPathRef.current, {
       strokeDashoffset: 0,
-      duration: 1.4,
+      duration: 1.15,
       ease: "power3.inOut"
-    }, "-=0.4")
+    }, "-=0.75")
+    .fromTo(wordmarkRef.current,
+      { y: 12, opacity: 0, filter: "blur(6px)" },
+      { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.65, ease: "power3.out" },
+      "-=0.35"
+    )
+    .fromTo(statusRef.current,
+      { y: 10, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" },
+      "-=0.45"
+    )
+    .fromTo(progressRef.current,
+      { scaleX: 0, transformOrigin: "left center" },
+      { scaleX: 1, duration: 1.25, ease: "power2.inOut" },
+      "-=0.6"
+    )
     // Add brief intense glow to the formed K
     .to(".intro-k-glow-core", {
       opacity: 0.8,
@@ -115,12 +147,12 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
     .set(flareRef.current, { opacity: 1 })
     .fromTo(flareRef.current,
       { x: "-10vw" },
-      { x: "110vw", duration: 1.6, ease: "power4.inOut" }
+      { x: "110vw", duration: 1.25, ease: "power4.inOut" }
     )
     // Synchronized mask wipe of the overlay container itself (clipPath inset)
     .fromTo(containerRef.current,
       { clipPath: "inset(0 0 0 0%)" },
-      { clipPath: "inset(0 0 0 100%)", duration: 1.6, ease: "power4.inOut" },
+      { clipPath: "inset(0 0 0 100%)", duration: 1.25, ease: "power4.inOut" },
       "<"
     )
     .to(overlayRef.current, {
@@ -136,55 +168,95 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
     <div ref={overlayRef} className="fixed inset-0 z-[100] bg-transparent flex items-center justify-center pointer-events-auto">
       
       {/* Container holding the visual elements that physically wipes out of view */}
-      <div ref={containerRef} className="absolute inset-0 bg-[#07080c] flex items-center justify-center overflow-hidden">
+      <div ref={containerRef} className="absolute inset-0 bg-[#050609] flex items-center justify-center overflow-hidden">
         
-        {/* Subtle background tech grid */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.015)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20 pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.045)_50%,transparent_100%)] bg-[length:100%_9px] opacity-[0.08] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(146,166,151,0.15)_0%,rgba(80,40,76,0.08)_34%,transparent_68%)] pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/70 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
 
-        <div className="relative flex flex-col items-center justify-center scale-100 md:scale-110">
+        <div className="pointer-events-none absolute inset-8 hidden border border-primary/10 md:block" />
+        <div className="intro-frame-line pointer-events-none absolute left-1/2 top-10 hidden h-px w-[min(72rem,78vw)] -translate-x-1/2 bg-gradient-to-r from-transparent via-primary/35 to-transparent md:block" />
+        <div className="intro-frame-line pointer-events-none absolute bottom-10 left-1/2 hidden h-px w-[min(72rem,78vw)] -translate-x-1/2 bg-gradient-to-r from-transparent via-primary/25 to-transparent md:block" />
+        <div className="intro-corner-mark pointer-events-none absolute left-8 top-8 hidden h-12 w-12 border-l border-t border-primary/35 md:block" />
+        <div className="intro-corner-mark pointer-events-none absolute right-8 top-8 hidden h-12 w-12 border-r border-t border-primary/35 md:block" />
+        <div className="intro-corner-mark pointer-events-none absolute bottom-8 left-8 hidden h-12 w-12 border-b border-l border-primary/25 md:block" />
+        <div className="intro-corner-mark pointer-events-none absolute bottom-8 right-8 hidden h-12 w-12 border-b border-r border-primary/25 md:block" />
+
+        <div className="relative flex w-full max-w-2xl flex-col items-center justify-center px-6">
+          <div className="mb-5 font-mono text-[10px] uppercase tracking-[0.42em] text-primary/55">
+            Initializing studio network
+          </div>
           
           {/* Weaving thread grid & glowing K SVG */}
-          <svg viewBox="0 0 100 100" className="w-56 h-56 text-primary drop-shadow-[0_0_12px_rgba(239,68,68,0.25)]">
+          <svg viewBox="0 0 100 100" className="h-52 w-52 text-primary drop-shadow-[0_0_24px_rgba(146,166,151,0.28)] md:h-64 md:w-64">
             
             {/* Horizontal Loom lines */}
-            <g ref={horizontalLinesRef} stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.12" fill="none">
+            <g ref={horizontalLinesRef} stroke="currentColor" strokeWidth="0.45" strokeOpacity="0.16" fill="none">
+              <line x1="5" y1="12" x2="95" y2="12" />
               <line x1="5" y1="20" x2="95" y2="20" />
               <line x1="5" y1="35" x2="95" y2="35" />
               <line x1="5" y1="50" x2="95" y2="50" />
               <line x1="5" y1="65" x2="95" y2="65" />
               <line x1="5" y1="80" x2="95" y2="80" />
+              <line x1="5" y1="88" x2="95" y2="88" />
             </g>
 
             {/* Vertical Loom lines */}
-            <g ref={verticalLinesRef} stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.12" fill="none">
+            <g ref={verticalLinesRef} stroke="currentColor" strokeWidth="0.45" strokeOpacity="0.16" fill="none">
+              <line x1="12" y1="5" x2="12" y2="95" />
               <line x1="20" y1="5" x2="20" y2="95" />
               <line x1="35" y1="5" x2="35" y2="95" />
               <line x1="50" y1="5" x2="50" y2="95" />
               <line x1="65" y1="5" x2="65" y2="95" />
               <line x1="80" y1="5" x2="80" y2="95" />
+              <line x1="88" y1="5" x2="88" y2="95" />
             </g>
 
             {/* Geometric guide circle */}
-            <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.15" strokeDasharray="3,5" fill="none" />
+            <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="0.35" strokeOpacity="0.12" fill="none" />
+            <circle ref={ringRef} cx="50" cy="50" r="34" stroke="currentColor" strokeWidth="0.65" strokeOpacity="0.36" fill="none" />
+            <circle cx="50" cy="50" r="27" stroke="currentColor" strokeWidth="0.35" strokeOpacity="0.16" strokeDasharray="2,5" fill="none" />
 
             {/* Single continuous geometric K laser thread path */}
             <path
               ref={kPathRef}
               d="M 35 15 L 35 85 M 35 50 L 70 15 M 35 50 L 70 85"
               stroke="currentColor"
-              strokeWidth="2.5"
+              strokeWidth="3.2"
               strokeLinecap="round"
               strokeLinejoin="round"
               fill="none"
-              className="opacity-0"
+              className="intro-k-glow-core opacity-0"
             />
             
             {/* Glowing intersection anchor */}
-            <circle cx="35" cy="50" r="2.5" className="intro-k-glowing-glow opacity-0" fill="currentColor" />
+            <circle cx="35" cy="50" r="2.4" className="intro-k-glow-core opacity-0" fill="currentColor" />
           </svg>
 
-          <div className="mt-8 font-mono text-[9px] uppercase tracking-[0.4em] text-primary/45 animate-pulse">
-            Weaving Loom Network // Koamishin.com
+          <div ref={wordmarkRef} className="mt-5 text-center opacity-0">
+            <div className="font-serif text-3xl font-bold leading-none text-foreground md:text-4xl">
+              Koamishin
+            </div>
+            <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.42em] text-primary/55">
+              Open source Laravel systems
+            </div>
+          </div>
+
+          <div ref={statusRef} className="mt-8 w-full max-w-md opacity-0">
+            <div className="mb-2 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.28em] text-muted-foreground">
+              <span>Weaving Loom Network</span>
+              <span>Koamishin.com</span>
+            </div>
+            <div className="h-px overflow-hidden rounded-full bg-primary/15">
+              <div ref={progressRef} className="h-full w-full origin-left bg-gradient-to-r from-primary/30 via-foreground/80 to-primary/40" />
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-2 font-mono text-[8px] uppercase tracking-[0.22em] text-primary/45">
+              <span>Routes</span>
+              <span className="text-center">Docs</span>
+              <span className="text-right">Studio</span>
+            </div>
           </div>
         </div>
       </div>
@@ -192,14 +264,14 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
       {/* Cinematic Horizontal Anamorphic Lens Flare */}
       <div
         ref={flareRef}
-        className="absolute top-0 bottom-0 w-24 -translate-x-1/2 flex items-center justify-center opacity-0 pointer-events-none z-50"
+        className="absolute top-0 bottom-0 w-32 -translate-x-1/2 flex items-center justify-center opacity-0 pointer-events-none z-50"
         style={{ left: 0 }}
       >
         {/* Soft horizontal glowing wings */}
-        <div className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-primary/60 to-transparent blur-md" />
+        <div className="absolute inset-y-0 w-28 bg-gradient-to-r from-transparent via-primary/65 to-transparent blur-md" />
         
         {/* Intense white laser core line */}
-        <div className="absolute inset-y-0 w-[2px] bg-white shadow-[0_0_20px_#ef4444,0_0_40px_rgba(239,68,68,0.8)]" />
+        <div className="absolute inset-y-0 w-[2px] bg-white shadow-[0_0_22px_rgba(146,166,151,0.95),0_0_48px_rgba(255,255,255,0.55)]" />
       </div>
 
     </div>
@@ -216,6 +288,29 @@ interface Particle {
   baseY: number;
 }
 
+const studioPanels = [
+  {
+    kicker: "01",
+    title: "Made to Fit",
+    copy: "Workflows shaped around the way your team already thinks, not the other way around.",
+    accent: "from-primary/30 to-emerald-300/20",
+  },
+  {
+    kicker: "02",
+    title: "Quietly Strong",
+    copy: "Interfaces that stay simple on the surface while carrying serious structure underneath.",
+    accent: "from-rose-400/25 to-primary/20",
+  },
+  {
+    kicker: "03",
+    title: "Shared by Default",
+    copy: "Reusable foundations, open packages, and habits that make the next build easier.",
+    accent: "from-sky-300/25 to-violet-400/20",
+  },
+];
+
+const studioNotes = ["Custom systems", "Open source craft", "Laravel foundations"];
+
 /* ─── Main Hero ─── */
 const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -224,6 +319,7 @@ const Hero: React.FC = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const [introDone, setIntroDone] = useState<boolean>(false);
+  const [activePanel, setActivePanel] = useState(0);
   const entrancePlayedRef = useRef<boolean>(false);
 
   // 1. Fluid Canvas Particle Network (The Thread Loom)
@@ -412,10 +508,10 @@ const Hero: React.FC = () => {
 
       // Cinematic Exit Scroll Trigger: Shrinks, lifts, blurs, and dissolves the entire rounded shell
       gsap.to(masterContentRef.current, {
-        scale: 0.88,
-        y: -150,
+        scale: 0.92,
+        y: -120,
         opacity: 0,
-        filter: "blur(18px)",
+        filter: "blur(10px)",
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
@@ -435,33 +531,11 @@ const Hero: React.FC = () => {
         }
       });
 
-      // Staggered geometric collage disintegration on scroll
-      gsap.to(".geom-rect-1", {
-        y: -220,
-        x: -40,
-        rotation: -15,
+      // Staggered dashboard cards lift away on scroll
+      gsap.to(".dashboard-card", {
+        y: -80,
         opacity: 0,
-        scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: true }
-      });
-      gsap.to(".geom-rect-2", {
-        y: -300,
-        x: 40,
-        rotation: 20,
-        opacity: 0,
-        scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: true }
-      });
-      gsap.to(".geom-rect-3", {
-        y: -180,
-        x: 20,
-        rotation: 35,
-        opacity: 0,
-        scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: true }
-      });
-      gsap.to(".geom-rect-4", {
-        y: -250,
-        x: -30,
-        rotation: -25,
-        opacity: 0,
+        stagger: 0.04,
         scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: true }
       });
 
@@ -470,10 +544,13 @@ const Hero: React.FC = () => {
         const x = (e.clientX / window.innerWidth - 0.5) * 40;
         const y = (e.clientY / window.innerHeight - 0.5) * 40;
 
-        gsap.to(".geom-rect-1", { x: x * 0.4, y: y * 0.4, duration: 1.2, ease: "power2.out" });
-        gsap.to(".geom-rect-2", { x: -x * 0.6, y: -y * 0.6, duration: 1.2, ease: "power2.out" });
-        gsap.to(".geom-rect-3", { x: -x * 0.2, y: y * 0.3, duration: 1.5, ease: "power2.out" });
-        gsap.to(".geom-rect-4", { x: x * 0.5, y: -y * 0.2, duration: 1.5, ease: "power2.out" });
+        gsap.to(".dashboard-card", {
+          x: x * 0.08,
+          y: y * 0.08,
+          duration: 0.9,
+          ease: "power2.out",
+          stagger: 0.025
+        });
 
         // Drift background floating visual assets at staggered speeds
         gsap.to(".floating-icon", {
@@ -503,11 +580,8 @@ const Hero: React.FC = () => {
     // Cinematic Camera-Push / Zoom Portal Timeline
     const tl = gsap.timeline();
 
-    // Scale up and disperse the 4 geometric shapes outwards like a doorway/gate opening
-    tl.to(".geom-rect-1", { x: -350, y: -250, scale: 1.5, opacity: 0, duration: 1.3, ease: "power2.inOut" }, 0);
-    tl.to(".geom-rect-2", { x: 350, y: 350, scale: 1.5, opacity: 0, duration: 1.3, ease: "power2.inOut" }, 0);
-    tl.to(".geom-rect-3", { x: 350, y: -250, scale: 1.5, opacity: 0, duration: 1.3, ease: "power2.inOut" }, 0);
-    tl.to(".geom-rect-4", { x: -350, y: 350, scale: 1.5, opacity: 0, duration: 1.3, ease: "power2.inOut" }, 0);
+    // Lift the dashboard cards away like the surface is opening into the next section
+    tl.to(".dashboard-card", { y: -90, scale: 0.96, opacity: 0, duration: 1.1, stagger: 0.04, ease: "power2.inOut" }, 0);
 
     // Zoom the main contained rounded shell card to simulate entering the portal
     tl.to(masterContentRef.current, { 
@@ -524,10 +598,17 @@ const Hero: React.FC = () => {
       easing: (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, // Smooth custom cubic bezier
       onComplete: () => {
         // Reset properties once scroll ends so they are available if the user scrolls back up
-        gsap.set([".geom-rect-1", ".geom-rect-2", ".geom-rect-3", ".geom-rect-4"], { clearProps: "all" });
+        gsap.set(".dashboard-card", { clearProps: "all" });
         gsap.set(masterContentRef.current, { clearProps: "all" });
       }
     });
+  };
+
+  const handleDashboardMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const card = event.currentTarget;
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty("--spotlight-x", `${event.clientX - rect.left}px`);
+    card.style.setProperty("--spotlight-y", `${event.clientY - rect.top}px`);
   };
 
   return (
@@ -566,16 +647,20 @@ const Hero: React.FC = () => {
         </div>
 
         <div ref={overlayRef} className="absolute inset-0 z-[2] bg-gradient-to-b from-transparent via-background/40 to-background opacity-0 pointer-events-none" />
-        <DataStream />
 
-        {/* Main Container: Rounded Shell enclosing the split module */}
-        <div ref={masterContentRef} className="mx-auto w-[94%] max-w-[1360px] xl:max-w-[1480px] rounded-[24px] md:rounded-[36px] border border-border/40 bg-card/15 backdrop-blur-md overflow-hidden relative p-8 md:p-14 lg:p-16 xl:p-20 z-10 shadow-2xl transition-all duration-300">
+        {/* Main Container: Rounded Shell enclosing the dashboard module */}
+        <div
+          ref={masterContentRef}
+          onMouseMove={handleDashboardMouseMove}
+          className="mx-auto w-[94%] max-w-[1360px] xl:max-w-[1480px] rounded-[18px] md:rounded-[24px] border border-border/50 bg-card/55 backdrop-blur-xl overflow-hidden relative p-6 md:p-10 lg:p-12 xl:p-14 z-10 shadow-2xl shadow-primary/5 transition-transform duration-500 will-change-transform"
+        >
           
           {/* Subtle background tech grid */}
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_var(--spotlight-x,50%)_var(--spotlight-y,50%),color-mix(in_oklch,var(--primary)_18%,transparent),transparent_32%)] opacity-60 pointer-events-none transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-br from-background/20 via-transparent to-primary/[0.04] pointer-events-none" />
 
           {/* 2-Column Split Module */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center relative z-10">
             
             {/* LEFT COLUMN: Editorial Text Stack (shifts from centered on mobile to left-aligned on lg screens) */}
             <div className="lg:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left relative z-20">
@@ -594,49 +679,91 @@ const Hero: React.FC = () => {
               </h1>
 
               {/* Muted Paragraph explaining our objective */}
-              <p className="reveal-desc mb-10 text-base md:text-lg font-light leading-relaxed text-muted-foreground max-w-lg">
+              <p className="reveal-desc mb-8 text-base md:text-lg font-light leading-relaxed text-muted-foreground max-w-lg">
                 We engineer secure, high-performance web applications and reusable packages. Specialized in Laravel backend services paired with interactive React and Vue user interfaces.
               </p>
 
               {/* Single Primary Button with Leading Arrow */}
-              <Button asChild size="lg" className="reveal-cta h-12 rounded-none px-7 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs tracking-wider uppercase transition-all duration-300 group shadow-lg shadow-primary/10">
-                <a href="#about" onClick={handleExploreClick} className="flex items-center">
-                  <ArrowRight className="mr-2.5 h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
-                  Explore Our Craft
-                </a>
-              </Button>
+              <div className="reveal-cta flex flex-col gap-5 sm:flex-row sm:items-center">
+                <Button asChild size="lg" className="h-12 rounded-md px-7 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs tracking-wider uppercase transition-all duration-300 group shadow-lg shadow-primary/10">
+                  <a href="#about" onClick={handleExploreClick} className="flex items-center">
+                    <ArrowRight className="mr-2.5 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    Explore Our Craft
+                  </a>
+                </Button>
+                <div className="flex items-center gap-3 text-left">
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Studio note</p>
+                    <p className="text-sm font-medium text-foreground">Simple outside, deeply considered inside.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 flex w-full max-w-xl flex-wrap gap-2">
+                {studioNotes.map((note) => (
+                  <span key={note} className="rounded-full border border-border/45 bg-background/45 px-3.5 py-2 text-xs text-muted-foreground backdrop-blur-sm">
+                    {note}
+                  </span>
+                ))}
+              </div>
 
             </div>
 
-            {/* RIGHT COLUMN: The Abstract Geometry Collage Frame */}
+            {/* RIGHT COLUMN: Kakaiba studio board */}
             <div className="lg:col-span-6 flex items-center justify-center relative z-10 w-full">
               
-              {/* Tall Frame hosting the abstract geometry */}
-              <div className="relative w-full h-[400px] lg:h-[480px] bg-muted/[0.03] border border-border/25 rounded-2xl overflow-hidden shadow-inner p-6">
-                
-                {/* Hairline decorative borders inside the frame representing architectural alignment axes */}
-                <div className="absolute inset-y-0 left-1/3 border-l border-border/10 pointer-events-none" />
-                <div className="absolute inset-x-0 top-1/4 border-t border-border/10 pointer-events-none" />
-                
-                {/* Rectangle 1: Top-Left Anchor (glowing primary accent wash) */}
-                <div className="geom-rect-1 absolute top-8 left-8 w-[45%] h-[35%] rounded-[16px] border border-primary/20 bg-primary/[0.04] backdrop-blur-xs flex items-center justify-center">
-                  <JapanesePattern className="h-2/3 w-2/3 text-primary/10" />
+              <div className="relative w-full min-h-[430px] lg:min-h-[500px] overflow-hidden rounded-xl border border-border/45 bg-background/50 p-5 shadow-2xl shadow-primary/5 backdrop-blur-xl">
+                <div className="absolute inset-5 rounded-lg border border-border/30 pointer-events-none" />
+                <div className="absolute -right-12 top-14 h-48 w-48 rounded-full border border-primary/20 pointer-events-none" />
+                <div className="absolute bottom-10 left-8 h-24 w-24 rotate-12 rounded-md border border-border/35 bg-card/30 pointer-events-none" />
+
+                <div className="dashboard-card relative z-10 ml-auto flex w-[56%] min-w-[230px] rotate-2 flex-col justify-between rounded-lg border border-border/45 bg-card/70 p-5 shadow-xl shadow-primary/5 backdrop-blur-md transition-all duration-500 hover:rotate-0 hover:-translate-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Koamishin</span>
+                    <ArrowUpRight className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="mt-12">
+                    <p className="font-serif text-6xl font-bold italic leading-none text-foreground">K</p>
+                    <p className="mt-3 max-w-[16rem] text-sm leading-relaxed text-muted-foreground">
+                      A small mark for work that feels intentional, durable, and a little unexpected.
+                    </p>
+                  </div>
                 </div>
 
-                {/* Rectangle 2: Bottom-Right Anchor (clean structural card with shadow) */}
-                <div className="geom-rect-2 absolute bottom-8 right-8 w-[48%] h-[42%] rounded-[20px] border border-border/40 bg-card/45 shadow-lg backdrop-blur-md" />
-
-                {/* Rectangle 3: Top-Right Anchor (slanted shared accent wash) */}
-                <div className="geom-rect-3 absolute top-12 right-12 w-[32%] h-[22%] rounded-[12px] border border-primary/15 bg-primary/[0.08] backdrop-blur-2xs rotate-6" />
-
-                {/* Rectangle 4: Bottom-Left Anchor (slanted container) */}
-                <div className="geom-rect-4 absolute bottom-12 left-12 w-[34%] h-[32%] rounded-[14px] border border-border/40 bg-card/20 -rotate-12 flex items-center justify-center">
-                  <KamonIcon className="h-1/2 w-1/2 text-primary/10" />
+                <div className="dashboard-card relative z-20 -mt-10 w-[68%] min-w-[260px] rounded-lg border border-border/45 bg-background/80 p-5 shadow-2xl shadow-primary/5 backdrop-blur-md transition-all duration-500 hover:-translate-y-1">
+                  <div className={`absolute inset-0 rounded-lg bg-gradient-to-br ${studioPanels[activePanel].accent} opacity-70 pointer-events-none`} />
+                  <div className="relative">
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{studioPanels[activePanel].kicker} / selected thought</p>
+                    <h2 className="mt-4 font-serif text-4xl font-bold text-foreground">{studioPanels[activePanel].title}</h2>
+                    <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{studioPanels[activePanel].copy}</p>
+                  </div>
                 </div>
 
-                {/* Subtle digital coordinates showcasing craft energy */}
-                <span className="absolute bottom-4 left-4 font-mono text-[7.5px] text-muted-foreground/35 uppercase tracking-widest">Comp. Scale // 1.096</span>
-                <span className="absolute top-4 right-4 font-mono text-[7.5px] text-muted-foreground/35 uppercase tracking-widest">Negative Space Grid</span>
+                <div className="relative z-30 mt-5 grid gap-2">
+                  {studioPanels.map((panel, index) => {
+                    const isActive = activePanel === index;
+                    return (
+                      <button
+                        key={panel.title}
+                        type="button"
+                        onMouseEnter={() => setActivePanel(index)}
+                        onClick={() => setActivePanel(index)}
+                        className={`dashboard-card group flex items-center justify-between rounded-md border px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 ${isActive ? "border-primary/45 bg-card/80 shadow-lg shadow-primary/10" : "border-border/40 bg-card/35 hover:border-primary/30"}`}
+                      >
+                        <span className="flex items-center gap-3">
+                          <span className={`h-2 w-2 rounded-full ${isActive ? "bg-primary" : "bg-muted-foreground/30"}`} />
+                          <span className="text-sm font-medium text-foreground">{panel.title}</span>
+                        </span>
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{panel.kicker}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="dashboard-card absolute bottom-5 right-5 hidden w-36 rounded-lg border border-border/40 bg-card/45 p-4 backdrop-blur-md md:block">
+                  <KamonIcon className="mx-auto h-16 w-16 text-primary/35" />
+                  <p className="mt-3 text-center font-mono text-[9px] uppercase tracking-widest text-muted-foreground">quiet craft</p>
+                </div>
 
               </div>
 

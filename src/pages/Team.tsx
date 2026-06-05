@@ -1,7 +1,6 @@
 import React, {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -10,14 +9,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowLeft,
   ArrowRight,
-  ArrowUpRight,
-  Building2,
-  Database,
+  BookOpen,
+  BriefcaseBusiness,
   ExternalLink,
   Github,
   MapPin,
-  ShieldCheck,
-  Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,15 +28,21 @@ interface Artisan {
   username: string;
   roles: string[];
   bio: string;
+  focus: string;
   image: string;
   location: string;
   company?: string;
+  statusLabel: string;
   stats: {
     repos: number;
     followers: number;
     contributions: string;
   };
   tech: string[];
+  featuredWork: {
+    label: string;
+    href: string;
+  }[];
   socials: {
     github: string;
     twitter?: string;
@@ -55,15 +57,27 @@ const artisans: Artisan[] = [
     name: "Jaymark",
     username: "jayreid017",
     roles: ["UI/UX Designer", "QA Engineer"],
-    bio: "Building with purpose. Contributing to the Koamishin ecosystem to empower developers worldwide.",
+    bio: "Designs with care and tests with patience.",
+    focus: "Interface systems, usability passes, and quality review.",
     image: "https://avatars.githubusercontent.com/u/253629901?v=4&s=1024",
     location: "Global",
+    statusLabel: "Available for design QA",
     stats: {
       repos: 4,
       followers: 0,
       contributions: "Active",
     },
     tech: ["Figma", "React", "Testing"],
+    featuredWork: [
+      {
+        label: "GitHub profile",
+        href: "https://github.com/jayreid017",
+      },
+      {
+        label: "Koamishin interface review",
+        href: "/#projects",
+      },
+    ],
     socials: {
       github: "https://github.com/jayreid017",
     },
@@ -77,15 +91,27 @@ const artisans: Artisan[] = [
       "Graphic Designer",
       "Network Administrator",
     ],
-    bio: "Crafting code with precision. Dedicated to open source excellence and community growth.",
+    bio: "Shapes full-stack work with a visual eye.",
+    focus: "Full-stack builds, infrastructure flow, and visual systems.",
     image: "https://avatars.githubusercontent.com/u/156742647?v=4&s=1024",
     location: "Remote",
+    statusLabel: "Core platform contributor",
     stats: {
       repos: 4,
       followers: 0,
       contributions: "Core",
     },
     tech: ["Laravel", "Vue", "System Arch"],
+    featuredWork: [
+      {
+        label: "Portfolio",
+        href: "https://ob.koamishin.com",
+      },
+      {
+        label: "Koami Starter Kit docs",
+        href: "/docs/koami-starter-kit/v1/introduction",
+      },
+    ],
     socials: {
       github: "https://github.com/SorenOutis",
       website: "https://ob.koamishin.com",
@@ -101,16 +127,28 @@ const artisans: Artisan[] = [
       "System Administrator",
       "DevOps",
     ],
-    bio: "Just a Chill Writer. Bringing creativity, clarity, and chill vibes to the codebase.",
+    bio: "Keeps systems clear, steady, and shippable.",
+    focus: "Technical direction, deployment paths, and system reliability.",
     image: "https://avatars.githubusercontent.com/u/195420898?v=4&s=1024",
     location: "Koamishin",
     company: "Koamishin",
+    statusLabel: "Leading architecture",
     stats: {
       repos: 6,
       followers: 1,
       contributions: "Lead",
     },
     tech: ["PHP", "TypeScript", "Writing"],
+    featuredWork: [
+      {
+        label: "Portfolio",
+        href: "https://rui.koamishin.com",
+      },
+      {
+        label: "Koamishin projects",
+        href: "/#projects",
+      },
+    ],
     socials: {
       github: "https://github.com/Rui-Zen",
       website: "https://rui.koamishin.com",
@@ -121,15 +159,27 @@ const artisans: Artisan[] = [
     name: "Angelika",
     username: "elyashzyl",
     roles: ["Developer", "Koamishin Contributor"],
-    bio: "Contributing thoughtful work to the Koamishin ecosystem and helping the team build with care.",
+    bio: "Builds thoughtful pieces for the Koamishin ecosystem.",
+    focus: "React interfaces, Laravel features, and ecosystem support.",
     image: "https://avatars.githubusercontent.com/elyashzyl?s=1024",
     location: "Remote",
+    statusLabel: "Active contributor",
     stats: {
       repos: 0,
       followers: 0,
       contributions: "Active",
     },
     tech: ["React", "TypeScript", "Laravel"],
+    featuredWork: [
+      {
+        label: "Portfolio",
+        href: "https://ely.koamishin.com/",
+      },
+      {
+        label: "GitHub profile",
+        href: "https://github.com/elyashzyl",
+      },
+    ],
     socials: {
       github: "https://github.com/elyashzyl",
       website: "https://ely.koamishin.com/",
@@ -147,18 +197,9 @@ const Team: React.FC = () => {
   const activeIndexRef = useRef(0);
   const isAnimatingRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isSectionPaused, setIsSectionPaused] = useState(false);
 
   const activeArtisan = artisans[activeIndex];
-  const totals = useMemo(
-    () => ({
-      members: artisans.length,
-      repos: artisans.reduce((total, artisan) => total + artisan.stats.repos, 0),
-      skills: Array.from(new Set(artisans.flatMap((artisan) => artisan.tech)))
-        .length,
-    }),
-    []
-  );
-
   const selectProfile = useCallback((nextIndex: number) => {
     if (nextIndex === activeIndexRef.current || isAnimatingRef.current) return;
 
@@ -246,12 +287,23 @@ const Team: React.FC = () => {
   };
 
   useEffect(() => {
+    if (isSectionPaused) return;
+
     const interval = window.setInterval(() => {
       selectProfile((activeIndexRef.current + 1) % artisans.length);
     }, 5000);
 
     return () => window.clearInterval(interval);
-  }, [selectProfile]);
+  }, [isSectionPaused, selectProfile]);
+
+  const handleSectionBlur = useCallback(
+    (event: React.FocusEvent<HTMLElement>) => {
+      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+        setIsSectionPaused(false);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -360,7 +412,7 @@ const Team: React.FC = () => {
 
       <div
         ref={containerRef}
-        className="relative min-h-screen overflow-hidden bg-background/65 pt-6 pb-10 lg:pt-8"
+        className="relative min-h-screen overflow-hidden bg-background/65 pt-4 pb-8 lg:pt-5"
       >
         <div
           ref={backgroundRef}
@@ -373,24 +425,29 @@ const Team: React.FC = () => {
         </div>
 
         <div className="container relative z-10 mx-auto px-5 md:px-8 lg:px-12">
-          <header className="team-reveal mx-auto mb-5 max-w-5xl text-center lg:mb-6">
-            <h1 className="mb-3 font-serif text-4xl font-bold leading-[1.02] text-foreground md:text-5xl lg:text-5xl xl:text-6xl">
-              The people behind the systems.
+          <header className="team-reveal mx-auto mb-4 max-w-4xl text-center lg:mb-4">
+            <h1 className="font-serif text-4xl font-bold leading-[1.02] text-foreground md:text-5xl lg:text-[3.25rem] xl:text-[3.6rem]">
+              Meet the team.
             </h1>
-            <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              A compact engineering collective shaped by product thinking, backend discipline, interface craft, and open-source delivery.
+            <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
+              The people behind Koamishin build open-source tools, product
+              interfaces, docs, and systems that keep each project moving.
             </p>
           </header>
 
-          <section className="team-reveal team-parallax-soft grid gap-4 lg:h-[calc(100vh-240px)] lg:min-h-[500px] lg:grid-cols-[320px_minmax(0,1fr)] lg:items-stretch xl:grid-cols-[350px_minmax(0,1fr)]">
-            <aside className="rounded-lg border border-border bg-card/65 p-3 shadow-xl shadow-primary/5 backdrop-blur-md lg:h-full lg:min-h-0">
-              <div className="mb-2.5 flex items-end justify-between gap-4">
+          <section
+            className="team-reveal team-parallax-soft grid gap-3 lg:h-[calc(100vh-230px)] lg:min-h-[460px] lg:grid-cols-[290px_minmax(0,1fr)] lg:items-stretch xl:grid-cols-[315px_minmax(0,1fr)]"
+            aria-label="Koamishin team profiles"
+            onMouseEnter={() => setIsSectionPaused(true)}
+            onMouseLeave={() => setIsSectionPaused(false)}
+            onFocusCapture={() => setIsSectionPaused(true)}
+            onBlurCapture={handleSectionBlur}
+          >
+            <aside className="rounded-lg border border-border bg-card/65 p-2.5 shadow-xl shadow-primary/5 backdrop-blur-md lg:h-full lg:min-h-0">
+              <div className="mb-2 flex items-end justify-between gap-4">
                 <div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
-                    Roster
-                  </span>
-                  <h2 className="font-serif text-lg font-bold text-foreground">
-                    Select Profile
+                  <h2 className="font-serif text-base font-bold text-foreground">
+                    Team
                   </h2>
                 </div>
                 <div className="rounded-md border border-border bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -400,7 +457,7 @@ const Team: React.FC = () => {
 
               <div
                 ref={rosterRef}
-                className="grid grid-cols-[repeat(4,minmax(220px,1fr))] gap-3 overflow-x-auto pb-2 lg:h-[calc(100%-48px)] lg:grid-cols-1 lg:grid-rows-4 lg:overflow-visible lg:pb-0"
+                className="grid grid-cols-[repeat(4,minmax(210px,1fr))] gap-2.5 overflow-x-auto pb-2 lg:h-[calc(100%-40px)] lg:grid-cols-1 lg:grid-rows-4 lg:overflow-visible lg:pb-0"
               >
                 {artisans.map((artisan, index) => {
                   const isActive = activeIndex === index;
@@ -411,8 +468,10 @@ const Team: React.FC = () => {
                       type="button"
                       data-profile-index={index}
                       onClick={() => selectProfile(index)}
+                      aria-pressed={isActive}
+                      aria-label={`${isActive ? "Current profile" : "View profile"}: ${artisan.name}`}
                       className={cn(
-                        "group grid min-w-[220px] grid-cols-[52px_1fr] gap-3 rounded-md border p-2 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background lg:min-w-0 lg:content-center",
+                        "group grid min-w-[210px] grid-cols-[46px_1fr] gap-2.5 rounded-md border p-2 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background lg:min-w-0 lg:content-center",
                         isActive
                           ? "border-primary/55 bg-primary/7 shadow-md shadow-primary/10"
                           : "border-border bg-background/45 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-background/75"
@@ -433,7 +492,7 @@ const Team: React.FC = () => {
 
                       <div className="min-w-0 self-center">
                         <div className="mb-1 flex items-center gap-2">
-                          <span className="truncate font-serif text-base font-bold leading-tight text-foreground">
+                          <span className="truncate font-serif text-[15px] font-bold leading-tight text-foreground">
                             {artisan.name}
                           </span>
                           <span
@@ -443,18 +502,21 @@ const Team: React.FC = () => {
                             )}
                           />
                         </div>
-                        <p className="mb-1 truncate font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-                          @{artisan.username}
+                        <p className="line-clamp-1 text-xs leading-relaxed text-muted-foreground">
+                          {artisan.roles[0]}
                         </p>
-                        <p className="line-clamp-1 text-xs leading-relaxed text-muted-foreground lg:line-clamp-2">
-                          {artisan.roles.join(" / ")}
-                        </p>
-                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        <div className="mt-1 flex flex-wrap gap-1">
                           <Badge
                             variant="outline"
                             className="rounded-md border-primary/20 bg-primary/5 px-2 py-0 text-[9px] text-primary"
                           >
                             {artisan.stats.contributions}
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className="max-w-full truncate rounded-md border-border/80 px-2 py-0 text-[9px] text-muted-foreground"
+                          >
+                            {artisan.statusLabel}
                           </Badge>
                           {artisan.company && (
                             <Badge
@@ -477,20 +539,20 @@ const Team: React.FC = () => {
               className="relative overflow-hidden rounded-lg border border-border bg-card/70 shadow-2xl shadow-primary/5 backdrop-blur-md lg:h-full lg:min-h-0"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-transparent to-secondary/20" />
-              <div className="relative z-10 grid h-full min-h-0 gap-0 xl:grid-cols-[minmax(280px,0.75fr)_1.25fr]">
+              <div className="relative z-10 grid h-full min-h-0 gap-0 xl:grid-cols-[minmax(340px,0.92fr)_1.08fr]">
                 <div
                   ref={portraitRef}
-                  className="group/portrait relative min-h-[300px] overflow-hidden border-b border-border bg-muted/35 xl:min-h-0 xl:border-b-0 xl:border-r"
+                  className="group/portrait relative min-h-[260px] overflow-hidden border-b border-border bg-muted/35 xl:min-h-0 xl:border-b-0 xl:border-r"
                 >
                   <img
                     key={activeArtisan.image}
                     src={activeArtisan.image}
                     alt={activeArtisan.name}
-                    className="h-full min-h-[300px] w-full object-cover grayscale transition duration-700 group-hover/portrait:grayscale-0 xl:min-h-0"
+                    className="h-full min-h-[260px] w-full object-cover grayscale transition duration-700 group-hover/portrait:grayscale-0 xl:min-h-0"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/15 to-transparent" />
-                  <div className="profile-swap absolute bottom-5 left-5 right-5">
-                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <div className="profile-swap absolute bottom-4 left-4 right-4">
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
                       <Badge className="rounded-md bg-primary text-primary-foreground">
                         ID {activeArtisan.id}
                       </Badge>
@@ -501,21 +563,21 @@ const Team: React.FC = () => {
                         {activeArtisan.stats.contributions}
                       </Badge>
                     </div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
-                      Active Profile
-                    </p>
                   </div>
                 </div>
 
-                <div className="flex min-h-[500px] flex-col p-5 md:p-6 lg:min-h-0 lg:overflow-y-auto xl:p-6">
-                  <div className="profile-swap mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div className="flex min-h-[440px] flex-col p-4 md:p-5 lg:min-h-0 lg:overflow-y-auto xl:p-5">
+                  <div className="profile-swap mb-3 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                        @{activeArtisan.username}
-                      </p>
-                      <h2 className="font-serif text-4xl font-bold leading-none text-foreground md:text-5xl">
+                      <h2 className="font-serif text-3xl font-bold leading-none text-foreground md:text-4xl xl:text-[2.7rem]">
                         {activeArtisan.name}
                       </h2>
+                      <p className="mt-1.5 text-sm text-muted-foreground">
+                        {activeArtisan.roles[0]}
+                      </p>
+                      <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                        {activeArtisan.focus}
+                      </p>
                     </div>
 
                     <div className="flex gap-2">
@@ -542,57 +604,24 @@ const Team: React.FC = () => {
                     </div>
                   </div>
 
-                  <p className="profile-swap mb-4 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                  <p className="profile-swap mb-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
                     {activeArtisan.bio}
                   </p>
 
-                  <div className="profile-swap mb-4 flex flex-wrap gap-2">
-                    {activeArtisan.roles.map((role) => (
+                  <div className="profile-swap mb-3 flex flex-wrap gap-2">
+                    {activeArtisan.roles.slice(0, 2).map((role) => (
                       <span
                         key={role}
-                        className="rounded-md border border-border bg-background/60 px-3 py-1.5 text-xs font-medium text-foreground"
+                          className="rounded-md border border-border bg-background/60 px-2.5 py-1 text-xs font-medium text-foreground"
                       >
                         {role}
                       </span>
                     ))}
                   </div>
 
-                  <div className="profile-swap mb-5 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-md border border-border bg-background/50 p-3">
-                      <Database className="mb-2 h-4 w-4 text-primary" />
-                      <div className="font-serif text-2xl font-bold">
-                        {activeArtisan.stats.repos}
-                      </div>
-                      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                        Repos
-                      </div>
-                    </div>
-                    <div className="rounded-md border border-border bg-background/50 p-3">
-                      <Users className="mb-2 h-4 w-4 text-primary" />
-                      <div className="font-serif text-2xl font-bold">
-                        {activeArtisan.stats.followers}
-                      </div>
-                      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                        Followers
-                      </div>
-                    </div>
-                    <div className="rounded-md border border-border bg-background/50 p-3">
-                      <ShieldCheck className="mb-2 h-4 w-4 text-primary" />
-                      <div className="font-serif text-2xl font-bold">
-                        {activeArtisan.stats.contributions}
-                      </div>
-                      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                        Status
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="profile-swap mb-5">
-                    <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-                      Core Skills
-                    </p>
+                  <div className="profile-swap mb-4">
                     <div className="flex flex-wrap gap-2">
-                      {activeArtisan.tech.map((tech) => (
+                      {activeArtisan.tech.slice(0, 3).map((tech) => (
                         <Badge
                           key={tech}
                           variant="secondary"
@@ -604,15 +633,68 @@ const Team: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="profile-swap mt-auto grid gap-4 border-t border-border pt-5 lg:grid-cols-[1fr_auto] lg:items-end">
+                  <div className="profile-swap mb-4 grid gap-2 sm:grid-cols-3">
+                    {[
+                      {
+                        label: "Repos",
+                        value: activeArtisan.stats.repos,
+                      },
+                      {
+                        label: "Followers",
+                        value: activeArtisan.stats.followers,
+                      },
+                      {
+                        label: "Status",
+                        value: activeArtisan.stats.contributions,
+                      },
+                    ].map((metric) => (
+                      <div
+                        key={metric.label}
+                        className="rounded-md border border-border bg-background/45 px-3 py-2"
+                      >
+                        <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                          {metric.label}
+                        </div>
+                        <div className="mt-0.5 truncate text-base font-semibold text-foreground">
+                          {metric.value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="profile-swap mb-4">
+                    <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+                      <BriefcaseBusiness className="h-3.5 w-3.5 text-primary" />
+                      Featured work
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {activeArtisan.featuredWork.map((work) => {
+                        const isExternal = /^https?:\/\//.test(work.href);
+
+                        return (
+                          <a
+                            key={work.label}
+                            href={work.href}
+                            target={isExternal ? "_blank" : undefined}
+                            rel={isExternal ? "noreferrer" : undefined}
+                            className="group flex min-w-0 items-center justify-between gap-3 rounded-md border border-border bg-background/45 px-3 py-2 text-sm text-foreground transition hover:border-primary/35 hover:bg-background/75"
+                          >
+                            <span className="truncate">{work.label}</span>
+                            <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition group-hover:text-primary" />
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="profile-swap mt-auto grid gap-3 border-t border-border pt-4 lg:grid-cols-[1fr_auto] lg:items-end">
                     <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-primary" />
                         {activeArtisan.location}
                       </span>
                       {activeArtisan.company && (
-                        <span className="flex items-center gap-2">
-                          <Building2 className="h-4 w-4 text-primary" />
+                        <span>
                           {activeArtisan.company}
                         </span>
                       )}
@@ -648,47 +730,41 @@ const Team: React.FC = () => {
             </div>
           </section>
 
-          <section className="team-reveal mt-5 grid gap-3 border-t border-border pt-5 md:grid-cols-3">
-            <div className="rounded-md border border-border bg-card/50 p-4">
-              <div className="font-serif text-3xl font-bold text-foreground">
-                {totals.members}
-              </div>
-              <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                Core Members
+          <section className="team-reveal mt-4 rounded-lg border border-border bg-card/65 p-4 shadow-xl shadow-primary/5 backdrop-blur-md md:flex md:items-center md:justify-between md:gap-6">
+            <div className="min-w-0">
+              <h2 className="font-serif text-xl font-bold text-foreground">
+                Explore what the team is building.
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Browse shipped projects, read the docs, or inspect the
+                open-source work behind Koamishin.
               </p>
             </div>
-            <div className="rounded-md border border-border bg-card/50 p-4">
-              <div className="font-serif text-3xl font-bold text-foreground">
-                {totals.repos}
-              </div>
-              <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                Public Repos
-              </p>
-            </div>
-            <div className="rounded-md border border-border bg-card/50 p-4">
-              <div className="font-serif text-3xl font-bold text-foreground">
-                {totals.skills}
-              </div>
-              <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                Shared Skills
-              </p>
+            <div className="mt-4 flex flex-wrap gap-2 md:mt-0 md:justify-end">
+              <Button asChild variant="outline" className="rounded-md">
+                <a href="/#projects">
+                  <BriefcaseBusiness className="mr-2 h-4 w-4" />
+                  Projects
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="rounded-md">
+                <a href="/docs">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Docs
+                </a>
+              </Button>
+              <Button asChild className="rounded-md">
+                <a
+                  href="https://github.com/Koamishin"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Github className="mr-2 h-4 w-4" />
+                  GitHub
+                </a>
+              </Button>
             </div>
           </section>
-
-          <div className="mt-10 flex flex-col items-center justify-between gap-4 text-muted-foreground md:flex-row">
-            <div className="font-mono text-xs uppercase tracking-widest">
-              Koamishin Network // Verified Personnel
-            </div>
-            <a
-              href="https://github.com/Koamishin"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest transition-colors hover:text-primary"
-            >
-              GitHub Network
-              <ArrowUpRight className="h-4 w-4" />
-            </a>
-          </div>
         </div>
       </div>
     </>
