@@ -168,13 +168,13 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
     <div ref={overlayRef} className="fixed inset-0 z-[100] bg-transparent flex items-center justify-center pointer-events-auto">
       
       {/* Container holding the visual elements that physically wipes out of view */}
-      <div ref={containerRef} className="absolute inset-0 bg-[#050609] flex items-center justify-center overflow-hidden">
+      <div ref={containerRef} className="absolute inset-0 flex items-center justify-center overflow-hidden bg-background text-foreground dark:bg-[#050609]">
         
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20 pointer-events-none" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.045)_50%,transparent_100%)] bg-[length:100%_9px] opacity-[0.08] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(146,166,151,0.15)_0%,rgba(80,40,76,0.08)_34%,transparent_68%)] pointer-events-none" />
-        <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/70 to-transparent pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(36,42,55,0.11)_1px,transparent_1px),linear-gradient(0deg,rgba(36,42,55,0.09)_1px,transparent_1px)] bg-[size:72px_72px] opacity-45 dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)] dark:opacity-20" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(36,42,55,0.07)_50%,transparent_100%)] bg-[length:100%_9px] opacity-[0.12] dark:bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.045)_50%,transparent_100%)] dark:opacity-[0.08]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(111,191,150,0.22)_0%,rgba(150,166,120,0.12)_34%,transparent_68%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(146,166,151,0.15)_0%,rgba(80,40,76,0.08)_34%,transparent_68%)]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-background via-background/80 to-transparent dark:from-black/70 dark:via-black/30" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/80 to-transparent dark:from-black/80 dark:via-black/30" />
 
         <div className="pointer-events-none absolute inset-8 hidden border border-primary/10 md:block" />
         <div className="intro-frame-line pointer-events-none absolute left-1/2 top-10 hidden h-px w-[min(72rem,78vw)] -translate-x-1/2 bg-gradient-to-r from-transparent via-primary/35 to-transparent md:block" />
@@ -190,7 +190,7 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
           </div>
           
           {/* Weaving thread grid & glowing K SVG */}
-          <svg viewBox="0 0 100 100" className="h-52 w-52 text-primary drop-shadow-[0_0_24px_rgba(146,166,151,0.28)] md:h-64 md:w-64">
+          <svg viewBox="0 0 100 100" className="h-52 w-52 text-primary drop-shadow-[0_0_24px_rgba(80,128,105,0.32)] dark:drop-shadow-[0_0_24px_rgba(146,166,151,0.28)] md:h-64 md:w-64">
             
             {/* Horizontal Loom lines */}
             <g ref={horizontalLinesRef} stroke="currentColor" strokeWidth="0.45" strokeOpacity="0.16" fill="none">
