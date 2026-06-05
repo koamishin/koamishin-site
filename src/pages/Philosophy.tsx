@@ -129,7 +129,7 @@ const Philosophy: React.FC = () => {
           {principles.map((principle, index) => (
             <div
               key={principle.title}
-              ref={(el) => cardsRef.current[index] = el}
+              ref={(el) => { cardsRef.current[index] = el; }}
               className="group relative flex flex-col items-center text-center p-8 rounded-2xl border border-transparent hover:border-primary/30 transition-all duration-300 hover:bg-card/50 hover:shadow-lg hover:shadow-primary/5"
             >
               <div className="absolute right-4 top-4 font-serif text-2xl font-bold text-foreground/5 group-hover:text-primary/10 transition-colors">

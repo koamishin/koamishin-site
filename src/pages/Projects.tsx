@@ -104,7 +104,7 @@ const Projects: React.FC = () => {
           {projectsData.map((project, index) => (
             <div
               key={project.title}
-              ref={(el) => itemsRef.current[index] = el}
+              ref={(el) => { itemsRef.current[index] = el; }}
               className="group relative"
             >
               <div className={`flex flex-col gap-10 ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center`}>

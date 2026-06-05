@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Sparkles, ArrowRight, Layers, Shield, Globe, Code } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Sparkles, Layers, Shield, Globe, Code } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -132,7 +131,7 @@ const About: React.FC = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              ref={(el) => cardsRef.current[index] = el}
+              ref={(el) => { cardsRef.current[index] = el; }}
               className="group p-8 rounded-2xl border border-border/40 bg-card/60 backdrop-blur-xl hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
             >
               <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
