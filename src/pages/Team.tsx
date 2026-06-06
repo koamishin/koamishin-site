@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ExternalLink,
   Github,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet-async";
+import { cn } from "@/lib/utils";
 
 interface Artisan {
   id: string;
@@ -161,6 +162,45 @@ const artisans: Artisan[] = [
 ];
 
 const Team: React.FC = () => {
+  const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
+  const [suppressedCards, setSuppressedCards] = useState<Set<string>>(new Set());
+
+  const flipCard = (id: string) => {
+    if (suppressedCards.has(id)) return;
+
+    setFlippedCards((current) => {
+      const next = new Set(current);
+      next.add(id);
+      return next;
+    });
+  };
+
+  const resetCard = (id: string) => {
+    setFlippedCards((current) => {
+      const next = new Set(current);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const suppressCard = (id: string) => {
+    resetCard(id);
+    setSuppressedCards((current) => {
+      const next = new Set(current);
+      next.add(id);
+      return next;
+    });
+  };
+
+  const releaseCard = (id: string) => {
+    resetCard(id);
+    setSuppressedCards((current) => {
+      const next = new Set(current);
+      next.delete(id);
+      return next;
+    });
+  };
+
   return (
     <>
       <Helmet>
@@ -206,18 +246,37 @@ const Team: React.FC = () => {
           </header>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {artisans.map((artisan) => (
+            {artisans.map((artisan) => {
+              const isFlipped = flippedCards.has(artisan.id);
+
+              return (
               <article
                 key={artisan.id}
                 className="group min-h-[calc(100svh-17rem)] rounded-sm outline-none [perspective:1400px]"
                 tabIndex={0}
+                onMouseEnter={() => flipCard(artisan.id)}
+                onMouseLeave={() => releaseCard(artisan.id)}
+                onFocus={() => flipCard(artisan.id)}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) {
+                    releaseCard(artisan.id);
+                  }
+                }}
               >
-                <div className="relative h-full min-h-[calc(100svh-17rem)] rounded-sm transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus-within:[transform:rotateY(180deg)]">
+                <div
+                  className={cn(
+                    "relative h-full min-h-[calc(100svh-17rem)] rounded-sm transition-transform duration-700 [transform-style:preserve-3d]",
+                    isFlipped && "[transform:rotateY(180deg)]",
+                  )}
+                >
                   <div className="absolute inset-0 overflow-hidden rounded-sm bg-muted [backface-visibility:hidden]">
                     <img
                       src={artisan.image}
                       alt={artisan.name}
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] group-focus-within:scale-[1.03]"
+                      className={cn(
+                        "h-full w-full object-cover transition duration-700",
+                        isFlipped && "scale-[1.03]",
+                      )}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-4">
@@ -265,14 +324,30 @@ const Team: React.FC = () => {
 
                     <div className="flex flex-wrap gap-2 pt-1">
                       <Button asChild size="sm" className="rounded-full">
-                        <a href={artisan.socials.github} target="_blank" rel="noreferrer">
+                        <a
+                          href={artisan.socials.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(event) => {
+                            suppressCard(artisan.id);
+                            event.currentTarget.blur();
+                          }}
+                        >
                           <Github className="mr-2 h-4 w-4" />
                           GitHub
                         </a>
                       </Button>
                       {artisan.socials.website && (
                         <Button asChild size="sm" variant="ghost" className="rounded-full">
-                          <a href={artisan.socials.website} target="_blank" rel="noreferrer">
+                          <a
+                            href={artisan.socials.website}
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={(event) => {
+                              suppressCard(artisan.id);
+                              event.currentTarget.blur();
+                            }}
+                          >
                             Site
                             <ExternalLink className="ml-2 h-3.5 w-3.5" />
                           </a>
@@ -283,7 +358,8 @@ const Team: React.FC = () => {
                   </div>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </div>
         </section>
       </div>
