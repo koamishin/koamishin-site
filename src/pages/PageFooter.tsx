@@ -64,7 +64,7 @@ const PageFooter: React.FC = () => {
   `;
 
   return (
-    <footer className="pt-16 md:pt-24 pb-8 md:pb-12 border-t border-border/30 bg-background/80 backdrop-blur-sm">
+    <footer className="pt-16 md:pt-24 pb-4 md:pb-8 border-t border-border/30 bg-background/80 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-12">
@@ -122,7 +122,7 @@ const PageFooter: React.FC = () => {
         </div>
 
         {/* Return to Top Button */}
-        <div className="flex justify-end mb-16">
+        <div className="flex justify-end mb-12">
           <button
             onClick={scrollToTop}
             className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground hover:text-primary transition-colors duration-300"
@@ -132,9 +132,9 @@ const PageFooter: React.FC = () => {
           </button>
         </div>
 
-        {/* KOAMISHIN ASCII Art at the Very Bottom */}
+        {/* KOAMISHIN ASCII Art at the Very Bottom - Responsive Width */}
         <div className="w-full overflow-hidden text-center">
-          <pre className="font-mono text-[0.4rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] text-foreground/10 select-none whitespace-pre leading-tight">
+          <pre className="font-mono text-[2vw] md:text-[1.8vw] lg:text-[1.6vw] xl:text-[1.4vw] text-foreground/10 select-none whitespace-pre leading-tight inline-block">
             {asciiArt}
           </pre>
         </div>
