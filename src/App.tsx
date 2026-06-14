@@ -4,6 +4,7 @@ import Hero from "./pages/Hero";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Philosophy from "./pages/Philosophy";
+import Contact from "./pages/Contact";
 import PageFooter from "./pages/PageFooter";
 import DocsHome from "./pages/DocsHome";
 import DocsPage from "./pages/DocsPage";
@@ -127,6 +128,9 @@ function HomePage() {
       </div>
       <div id="philosophy">
         <Philosophy />
+      </div>
+      <div id="contact">
+        <Contact />
       </div>
     </>
   );
