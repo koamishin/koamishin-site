@@ -56,15 +56,16 @@ const PageFooter: React.FC = () => {
   ];
 
   const asciiArt = `
-  KK   KK  OOOOOO  AA   AA  MM   MM  II  SS SS    HH   HH  II  NN   NN
-  KK KK    OO  OO  AAAAAA  MMM MMM  II  SS       HH   HH  II  NNN  NN
-  KKK      OO  OO  AA   AA  MM M MM  II   SSS    HHHHHHH  II  NN N NN
-  KK KK    OO  OO  AA   AA  MM   MM  II      SS  HH   HH  II  NN  NNN
-  KK   KK  OOOOOO  AA   AA  MM   MM  II  SS SS   HH   HH  II  NN   NN
+ ██╗  ██╗ ██████╗  █████╗ ███╗   ███╗██╗███████╗██╗  ██╗██╗███╗   ██╗
+ ██║ ██╔╝██╔═══██╗██╔══██╗████╗ ████║██║██╔════╝██║  ██║██║████╗  ██║
+ █████╔╝ ██║   ██║███████║██╔████╔██║██║███████╗███████║██║██╔██╗ ██║
+ ██╔═██╗ ██║   ██║██╔══██║██║╚██╔╝██║██║╚════██║██╔══██║██║██║╚██╗██║
+ ██║  ██╗╚██████╔╝██║  ██║██║ ╚═╝ ██║██║███████║██║  ██║██║██║ ╚████║
+ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
   `;
 
   return (
-    <footer className="pt-16 md:pt-24 pb-4 md:pb-8 border-t border-border/30 bg-background/80 backdrop-blur-sm">
+    <footer className="pt-16 md:pt-24 pb-2 md:pb-4 border-t border-border/30 bg-background/80 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-12">
@@ -122,7 +123,7 @@ const PageFooter: React.FC = () => {
         </div>
 
         {/* Return to Top Button */}
-        <div className="flex justify-end mb-12">
+        <div className="flex justify-end mb-8">
           <button
             onClick={scrollToTop}
             className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground hover:text-primary transition-colors duration-300"
@@ -134,7 +135,7 @@ const PageFooter: React.FC = () => {
 
         {/* KOAMISHIN ASCII Art at the Very Bottom - Responsive Width */}
         <div className="w-full overflow-hidden text-center">
-          <pre className="font-mono text-[2vw] md:text-[1.8vw] lg:text-[1.6vw] xl:text-[1.4vw] text-foreground/10 select-none whitespace-pre leading-tight inline-block">
+          <pre className="font-mono text-[0.8vw] xs:text-[1vw] sm:text-[1.2vw] md:text-[1.4vw] lg:text-[1.6vw] xl:text-[1.8vw] text-foreground/10 select-none whitespace-pre leading-tight inline-block">
             {asciiArt}
           </pre>
         </div>
