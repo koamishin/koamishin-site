@@ -55,11 +55,19 @@ const PageFooter: React.FC = () => {
     { icon: <Mail className="h-4 w-4" />, href: "mailto:contact@koamishin.com", label: "Email" }
   ];
 
+  const asciiArt = `
+  KK   KK  OOOOOO  AA   AA  MM   MM  II  SS SS    HH   HH  II  NN   NN
+  KK KK    OO  OO  AAAAAA  MMM MMM  II  SS       HH   HH  II  NNN  NN
+  KKK      OO  OO  AA   AA  MM M MM  II   SSS    HHHHHHH  II  NN N NN
+  KK KK    OO  OO  AA   AA  MM   MM  II      SS  HH   HH  II  NN  NNN
+  KK   KK  OOOOOO  AA   AA  MM   MM  II  SS SS   HH   HH  II  NN   NN
+  `;
+
   return (
-    <footer className="py-16 md:py-24 border-t border-border/30 bg-background/80 backdrop-blur-sm">
+    <footer className="pt-16 md:pt-24 pb-8 md:pb-12 border-t border-border/30 bg-background/80 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-12">
           {/* Brand Section */}
           <div className="lg:col-span-5">
             <h2 className="font-serif text-4xl md:text-5xl font-bold mb-4 leading-tight">
@@ -114,7 +122,7 @@ const PageFooter: React.FC = () => {
         </div>
 
         {/* Return to Top Button */}
-        <div className="flex justify-end mb-12">
+        <div className="flex justify-end mb-16">
           <button
             onClick={scrollToTop}
             className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground hover:text-primary transition-colors duration-300"
@@ -124,11 +132,11 @@ const PageFooter: React.FC = () => {
           </button>
         </div>
 
-        {/* Big KOAMISHIN Text at the Bottom */}
-        <div className="w-full">
-          <h2 className="font-serif text-7xl md:text-9xl lg:text-[12rem] font-bold leading-none tracking-tight text-foreground/10 select-none text-center">
-            KOAMISHIN
-          </h2>
+        {/* KOAMISHIN ASCII Art at the Very Bottom */}
+        <div className="w-full overflow-hidden text-center">
+          <pre className="font-mono text-[0.4rem] md:text-[0.6rem] lg:text-[0.8rem] xl:text-[1rem] text-foreground/10 select-none whitespace-pre leading-tight">
+            {asciiArt}
+          </pre>
         </div>
       </div>
     </footer>
