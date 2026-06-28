@@ -1,9 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Users, Sparkles, Gift, Quote, Lightbulb } from 'lucide-react';
-
-gsap.registerPlugin(ScrollTrigger);
+import { gsap } from '@/lib/gsap';
 
 const Philosophy: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,7 +30,21 @@ const Philosophy: React.FC = () => {
   ];
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hardwareConcurrency = navigator.hardwareConcurrency || 2;
+    const isLowEnd = hardwareConcurrency <= 2;
+
     const ctx = gsap.context(() => {
+      // Skip animations on low-end devices or with reduced motion
+      if (reducedMotion || isLowEnd) {
+        gsap.set(headerRef.current?.children || [], { opacity: 1, y: 0 });
+        if (quoteRef.current) gsap.set(quoteRef.current, { opacity: 1, scale: 1 });
+        cardsRef.current.forEach((card) => {
+          if (card) gsap.set(card, { opacity: 1, y: 0 });
+        });
+        return;
+      }
+
       // Header animation
       gsap.fromTo(headerRef.current?.children || [],
         { opacity: 0, y: 50 },

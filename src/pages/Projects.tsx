@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CheckCircle, Github, BookOpen, ArrowUpRight, Rocket, GraduationCap, Package, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { docsConfig } from '@/config/docsConfig';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,7 +33,22 @@ const Projects: React.FC = () => {
   }));
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hardwareConcurrency = navigator.hardwareConcurrency || 2;
+    const deviceMemory = (navigator as any).deviceMemory || 4;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isLowEnd = hardwareConcurrency <= 2 || deviceMemory <= 2 || isMobile;
+
     const ctx = gsap.context(() => {
+      // Skip animations on low-end devices or with reduced motion
+      if (reducedMotion || isLowEnd) {
+        gsap.set(headerRef.current?.children || [], { opacity: 1, y: 0 });
+        itemsRef.current.forEach((item) => {
+          if (item) gsap.set(item, { opacity: 1, y: 0 });
+        });
+        return;
+      }
+
       // Header animation
       gsap.fromTo(headerRef.current?.children || [],
         { opacity: 0, y: 50 },

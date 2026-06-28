@@ -1,4 +1,4 @@
-// import * as React from "react";
+import React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes"; // Use the hook from next-themes
 
@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function ThemeToggle() {
+export const ThemeToggle = React.memo(function ThemeToggle() {
   const { setTheme } = useTheme();
 
   return (
@@ -35,4 +35,4 @@ export function ThemeToggle() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+});

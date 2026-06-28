@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-gsap.registerPlugin(ScrollTrigger);
+import { detectLowEndDevice } from '@/lib/performance';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
 
 /* ─── Laser Grid & Flare Sweep Cinematic Intro Overlay ─── */
 const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
@@ -16,7 +14,8 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
   const completedRef = useRef(false);
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const metrics = detectLowEndDevice();
+    
     const completeIntro = () => {
       if (completedRef.current) return;
       completedRef.current = true;
@@ -54,7 +53,7 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
     });
     gsap.set(taglineTarget, { opacity: 0, y: 6 });
 
-    if (reducedMotion) {
+    if (metrics.prefersReducedMotion || metrics.isLowEnd) {
       gsap.set(containerRef.current, { opacity: 1 });
       gsap.set(letters, { opacity: 1, x: 0, y: 0, rotate: 0, filter: "blur(0px)" });
       gsap.set(taglineTarget, { opacity: 1, y: 0 });
@@ -173,9 +172,20 @@ const Hero: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const metrics = detectLowEndDevice();
+
     const ctx = gsap.context(() => {
       // Only animate hero content after intro is done
       if (!introDone) return;
+
+      // Skip animations on low-end devices or with reduced motion
+      if (metrics.prefersReducedMotion || metrics.isLowEnd) {
+        gsap.set(titleRef.current?.children || [], { opacity: 1, y: 0 });
+        if (subtitleRef.current) gsap.set(subtitleRef.current, { opacity: 1, y: 0 });
+        if (ctaRef.current) gsap.set(ctaRef.current, { opacity: 1, y: 0 });
+        if (indicatorRef.current) gsap.set(indicatorRef.current, { opacity: 1, y: 0 });
+        return;
+      }
 
       // Initial animation when component loads
       const tl = gsap.timeline();

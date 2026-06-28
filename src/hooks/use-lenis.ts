@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { detectLowEndDevice } from "@/lib/performance";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,6 +11,13 @@ type WindowWithLenis = { lenis?: LenisInstance };
 
 export const useLenis = () => {
   useEffect(() => {
+    const metrics = detectLowEndDevice();
+
+    if (metrics.isLowEnd) {
+      // Don't initialize Lenis on low-end devices
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

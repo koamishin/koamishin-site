@@ -271,6 +271,8 @@ function Image({ alt, className, ...props }: React.ImgHTMLAttributes<HTMLImageEl
         <figure className="my-6">
             <img
                 alt={alt}
+                loading="lazy"
+                decoding="async"
                 className={cn(
                     "w-full max-w-2xl mx-auto rounded-lg border border-border",
                     className

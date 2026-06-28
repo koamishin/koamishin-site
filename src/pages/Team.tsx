@@ -42,7 +42,7 @@ const artisans: Artisan[] = [
     roles: ["UI/UX Designer", "QA Engineer"],
     bio: "Designs with care and tests with patience.",
     focus: "Interface systems, usability passes, and quality review.",
-    image: "https://avatars.githubusercontent.com/u/253629901?v=4&s=1024",
+    image: "https://avatars.githubusercontent.com/u/253629901?v=4&s=256",
     location: "Global",
     statusLabel: "Available for design QA",
     stats: {
@@ -72,7 +72,7 @@ const artisans: Artisan[] = [
     roles: ["Full Stack Developer", "Graphic Designer", "Network Administrator"],
     bio: "Shapes full-stack work with a visual eye.",
     focus: "Full-stack builds, infrastructure flow, and visual systems.",
-    image: "https://avatars.githubusercontent.com/u/156742647?v=4&s=1024",
+    image: "https://avatars.githubusercontent.com/u/156742647?v=4&s=256",
     location: "Remote",
     statusLabel: "Core platform contributor",
     stats: {
@@ -103,7 +103,7 @@ const artisans: Artisan[] = [
     roles: ["Full Stack Engineer", "Technical Lead", "System Administrator", "DevOps"],
     bio: "Keeps systems clear, steady, and shippable.",
     focus: "Technical direction, deployment paths, and system reliability.",
-    image: "https://avatars.githubusercontent.com/u/195420898?v=4&s=1024",
+    image: "https://avatars.githubusercontent.com/u/195420898?v=4&s=256",
     location: "Koamishin",
     company: "Koamishin",
     statusLabel: "Leading architecture",
@@ -135,7 +135,7 @@ const artisans: Artisan[] = [
     roles: ["Developer", "Koamishin Contributor"],
     bio: "Builds thoughtful pieces for the Koamishin ecosystem.",
     focus: "React interfaces, Laravel features, and ecosystem support.",
-    image: "https://avatars.githubusercontent.com/elyashzyl?s=1024",
+    image: "https://avatars.githubusercontent.com/elyashzyl?s=256",
     location: "Remote",
     statusLabel: "Active contributor",
     stats: {
@@ -273,6 +273,8 @@ const Team: React.FC = () => {
                     <img
                       src={artisan.image}
                       alt={artisan.name}
+                      loading="lazy"
+                      decoding="async"
                       className={cn(
                         "h-full w-full object-cover transition duration-700",
                         isFlipped && "scale-[1.03]",
@@ -294,6 +296,8 @@ const Team: React.FC = () => {
                       src={artisan.image}
                       alt=""
                       aria-hidden="true"
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 h-full w-full object-cover grayscale"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-background/78 to-background/20" />

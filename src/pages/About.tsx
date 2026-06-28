@@ -1,9 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Sparkles, Layers, Shield, Globe, Code } from 'lucide-react';
-
-gsap.registerPlugin(ScrollTrigger);
+import { detectLowEndDevice } from '@/lib/performance';
+import { gsap } from '@/lib/gsap';
 
 const About: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,7 +40,19 @@ const About: React.FC = () => {
   ];
 
   useEffect(() => {
+    const metrics = detectLowEndDevice();
+
     const ctx = gsap.context(() => {
+      // Skip animations on low-end devices or with reduced motion
+      if (metrics.prefersReducedMotion || metrics.isLowEnd) {
+        gsap.set(headerRef.current?.children || [], { opacity: 1, y: 0 });
+        cardsRef.current.forEach((card) => {
+          if (card) gsap.set(card, { opacity: 1, y: 0, scale: 1 });
+        });
+        gsap.set(statsRef.current?.children || [], { opacity: 1, y: 0 });
+        return;
+      }
+
       // Header animation
       gsap.fromTo(headerRef.current?.children || [],
         { opacity: 0, y: 50 },

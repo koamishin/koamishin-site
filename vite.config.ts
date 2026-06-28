@@ -20,6 +20,19 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist", // This is the default
+    outDir: "dist",
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-popover', '@radix-ui/react-tooltip', '@radix-ui/react-slot'],
+          'gsap-vendor': ['gsap'],
+          'three-vendor': ['three'],
+          'mdx-vendor': ['@mdx-js/react'],
+          'utils-vendor': ['clsx', 'tailwind-merge', 'class-variance-authority'],
+        },
+      },
+    },
   },
 });

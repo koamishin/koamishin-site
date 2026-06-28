@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +16,7 @@ import { ThemeToggle } from "./ThemeToggle";
 const navItems = [
   { name: "About", href: "/#about" },
   { name: "Projects", href: "/#projects" },
+  { name: "Enterprise", href: "/enterprise-projects" },
   { name: "Philosophy", href: "/#philosophy" },
   { name: "Contact", href: "/#contact" },
   { name: "Team", href: "/team" },
@@ -66,10 +66,14 @@ const Header: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 20);
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -104,16 +108,13 @@ const Header: React.FC = () => {
 
 
   return (
-    <motion.header
+    <header
       className={cn(
         "fixed top-0 z-50 w-full transition-all duration-500 ease-in-out border-b border-transparent",
         isScrolled 
           ? "bg-background/80 backdrop-blur-md border-border py-2" 
           : "bg-transparent py-6"
       )}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="container mx-auto flex items-center justify-between px-6 md:px-12">
         
@@ -128,7 +129,7 @@ const Header: React.FC = () => {
           </a>
         </div>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-6 md:flex">
           {navItems.map((item) => (
             <a
               key={item.name}
@@ -208,7 +209,7 @@ const Header: React.FC = () => {
           </Sheet>
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 };
 
