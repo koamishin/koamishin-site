@@ -13,22 +13,44 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
 
   useEffect(() => {
     const metrics = detectLowEndDevice();
-    
+
     const completeIntro = () => {
       if (completedRef.current) return;
       completedRef.current = true;
       onComplete?.();
     };
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        if (overlayRef.current) overlayRef.current.style.pointerEvents = "none";
-      }
-    });
-
     const letters = wordmarkRef.current?.querySelectorAll(".intro-letter") || [];
     const tagline = wordmarkRef.current?.querySelector(".intro-tagline");
     const taglineTarget = tagline ? [tagline] : [];
+
+    // --- Low-end / reduced-motion: skip GSAP entirely ---
+    if (metrics.prefersReducedMotion || metrics.isLowEnd) {
+      if (containerRef.current) containerRef.current.style.opacity = '1';
+      letters.forEach((el: Element) => {
+        const htm = el as HTMLElement;
+        htm.style.opacity = '1';
+        htm.style.transform = 'translate(0, 0) rotate(0deg)';
+        htm.style.filter = 'blur(0px)';
+      });
+      if (tagline) {
+        (tagline as HTMLElement).style.opacity = '1';
+        (tagline as HTMLElement).style.transform = 'translateY(0)';
+      }
+
+      // Fire completeIntro immediately so hero starts rendering
+      completeIntro();
+
+      // CSS transition for overlay fade — no GSAP
+      if (overlayRef.current) {
+        overlayRef.current.style.transition = 'opacity 0.15s ease-out';
+        overlayRef.current.style.opacity = '0';
+        overlayRef.current.style.pointerEvents = 'none';
+      }
+      return () => {};
+    }
+
+    // --- Normal animation path (capable devices only) ---
     const offsets = [
       { x: -150, y: -80, rotate: -18 },
       { x: 120, y: -90, rotate: 16 },
@@ -41,6 +63,12 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
       { x: -80, y: 115, rotate: 10 },
     ];
 
+    const tl = gsap.timeline({
+      onComplete: () => {
+        if (overlayRef.current) overlayRef.current.style.pointerEvents = "none";
+      }
+    });
+
     gsap.set(wordmarkRef.current, { opacity: 1, scale: 1, transformOrigin: "50% 50%" });
     gsap.set(letters, {
       opacity: 0,
@@ -50,16 +78,6 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
       filter: "blur(8px)",
     });
     gsap.set(taglineTarget, { opacity: 0, y: 6 });
-
-    if (metrics.prefersReducedMotion || metrics.isLowEnd) {
-      gsap.set(containerRef.current, { opacity: 1 });
-      gsap.set(letters, { opacity: 1, x: 0, y: 0, rotate: 0, filter: "blur(0px)" });
-      gsap.set(taglineTarget, { opacity: 1, y: 0 });
-      tl.call(completeIntro);
-      tl.to(overlayRef.current, { opacity: 0, delay: 0.35, duration: 0.25 });
-      return () => { tl.kill(); };
-    }
-
     tl.set(containerRef.current, { clipPath: "inset(0 0 0 0%)" })
     .to(letters, {
       opacity: 1,
@@ -151,12 +169,15 @@ const Hero: React.FC = () => {
       // Only animate hero content after intro is done
       if (!introDone) return;
 
-      // Skip animations on low-end devices or with reduced motion
+      // Skip animations on low-end devices or with reduced motion — direct styles, no GSAP
       if (metrics.prefersReducedMotion || metrics.isLowEnd) {
-        gsap.set(titleRef.current?.children || [], { opacity: 1, y: 0 });
-        if (subtitleRef.current) gsap.set(subtitleRef.current, { opacity: 1, y: 0 });
-        if (ctaRef.current) gsap.set(ctaRef.current, { opacity: 1, y: 0 });
-        if (indicatorRef.current) gsap.set(indicatorRef.current, { opacity: 1, y: 0 });
+        titleRef.current?.children?.forEach((el) => {
+          (el as HTMLElement).style.opacity = '1';
+          (el as HTMLElement).style.transform = 'translateY(0)';
+        });
+        if (subtitleRef.current) { subtitleRef.current.style.opacity = '1'; subtitleRef.current.style.transform = 'translateY(0)'; }
+        if (ctaRef.current) { ctaRef.current.style.opacity = '1'; ctaRef.current.style.transform = 'translateY(0)'; }
+        if (indicatorRef.current) { indicatorRef.current.style.opacity = '1'; indicatorRef.current.style.transform = 'translateY(0)'; }
         return;
       }
 
