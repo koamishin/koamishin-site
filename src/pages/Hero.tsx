@@ -8,9 +8,7 @@ import { gsap, ScrollTrigger } from '@/lib/gsap';
 const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
   const wordmarkRef = useRef<HTMLDivElement>(null);
-  const statusRef = useRef<HTMLDivElement>(null);
   const completedRef = useRef(false);
 
   useEffect(() => {
@@ -57,8 +55,6 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
       gsap.set(containerRef.current, { opacity: 1 });
       gsap.set(letters, { opacity: 1, x: 0, y: 0, rotate: 0, filter: "blur(0px)" });
       gsap.set(taglineTarget, { opacity: 1, y: 0 });
-      gsap.set(progressRef.current, { scaleX: 1 });
-      gsap.set(statusRef.current, { opacity: 1, y: 0 });
       tl.call(completeIntro);
       tl.to(overlayRef.current, { opacity: 0, delay: 0.35, duration: 0.25 });
       return () => { tl.kill(); };
@@ -71,47 +67,31 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
       y: 0,
       rotate: 0,
       filter: "blur(0px)",
-      duration: 1.45,
+      duration: 0.9,
       ease: "power4.out",
       stagger: {
-        each: 0.11,
+        each: 0.08,
         from: "random",
       },
     })
     .to(taglineTarget, {
       opacity: 1,
       y: 0,
-      duration: 0.5,
+      duration: 0.25,
       ease: "power2.out"
-    }, "-=0.16")
-    .fromTo(statusRef.current,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.45, ease: "power2.out" },
-      "-=0.25"
-    )
-    .fromTo(progressRef.current,
-      { scaleX: 0, transformOrigin: "left center" },
-      { scaleX: 1, duration: 1.15, ease: "power2.inOut" },
-      "-=0.15"
-    )
-    .to(statusRef.current, {
-      y: -8,
-      opacity: 0,
-      duration: 0.18,
-      ease: "power2.in"
-    }, "+=0.45")
+    }, "-=0.08")
     .call(completeIntro)
     .to(wordmarkRef.current, {
       scale: 12,
       opacity: 0,
-      duration: 1.05,
+      duration: 0.5,
       ease: "power4.inOut"
-    }, "-=0.08")
+    }, "+=0.25")
     .to(overlayRef.current, {
       opacity: 0,
-      duration: 0.35,
+      duration: 0.2,
       ease: "power2.out"
-    }, "-=0.28");
+    }, "-=0.1");
 
     return () => { tl.kill(); };
   }, [onComplete]);
@@ -136,14 +116,7 @@ const LaserGridIntroOverlay: React.FC<{ onComplete?: () => void }> = ({ onComple
             </div>
           </div>
 
-          <div ref={statusRef} className="mt-7 w-full max-w-48 opacity-0">
-            <div className="h-px overflow-hidden bg-border">
-              <div ref={progressRef} className="h-full w-full origin-left bg-primary" />
-            </div>
-            <div className="mt-3 text-center font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
-              Loading
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
